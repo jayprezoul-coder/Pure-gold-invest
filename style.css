@@ -84,3 +84,29 @@ button {
 button:hover {
   transform: scale(1.05);
 }
+body {
+  font-size: 18px;
+}
+
+section {
+  padding: 20px;
+}
+
+input {
+  width: 90%;
+  padding: 14px;
+  font-size: 18px;
+}
+
+button {
+  padding: 14px 25px;
+  font-size: 18px;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 26px;
+}
