@@ -2,68 +2,152 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Pure Gold Invest - Dashboard</title>
+
   <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
 <header>
   <h1>🪙 Pure Gold Invest</h1>
-  <p>Investor Dashboard</p>
+  <p id="welcome">Investor Dashboard</p>
 </header>
 
+
 <section>
 
-<h2>Portfolio Summary</h2>
+<h2>Available Gold Packages</h2>
 
-<p>🪙 Gold Holdings: 250 grams</p>
-<p>💰 Current Value: $25,000</p>
-<p>📈 Investment Status: Active</p>
+<div>
+
+<h3>Package 1</h3>
+
+<p>Amount to Invest:</p>
+<h3>💵 $50,000</h3>
+
+<p>Profits Gained:</p>
+<h3>📈 $500,000</h3>
+
+<button>Select Package</button>
+
+</div>
+
+
+<br>
+
+
+<div>
+
+<h3>Package 2</h3>
+
+<p>Amount to Invest:</p>
+<h3>💵 $100,000</h3>
+
+<p>Profits Gained:</p>
+<h3>📈 $1,500,000</h3>
+
+<button>Select Package</button>
+
+</div>
+<br>
+
+<div>
+
+<h3>Package 3</h3>
+
+<p>Amount to Invest:</p>
+<h3>💵 $200,000</h3>
+
+<p>Profits Gained:</p>
+<h3>📈 $2,500,000</h3>
+
+<button>Select Package</button>
+
+</div>
+
+
+<br>
+
+
+<div>
+
+<h3>Package 4</h3>
+
+<p>Amount to Invest:</p>
+<h3>💵 $300,000</h3>
+
+<p>Profits Gained:</p>
+<h3>📈 $4,000,000</h3>
+
+<button>Select Package</button>
+
+</div>
 
 </section>
 
 
 <section>
 
-<h2>Quick Actions</h2>
+<h2>Your Investment</h2>
 
-<a href="portfolio.html">
-<button>View Portfolio</button>
-</a>
+<p>Selected Package: —</p>
 
-<a href="menu.html">
-<button>Main Menu</button>
-</a>
+<p>Payment Status: —</p>
 
-</section>
+<p>Delivery Address: —</p>
 
-
-<section>
-
-<h2>Recent Activity</h2>
-
-<p>✔ Gold purchase completed</p>
-<p>✔ Portfolio updated</p>
-<p>✔ Account secured</p>
+<p>Shipping Status: —</p>
 
 </section>
 
 
 <section>
 
-<h2>Notifications</h2>
+<h2>Account</h2>
 
-<p>Your investment information is up to date.</p>
+<button>🔔 Notifications</button>
 
-</section>
+<button>💬 Message Admin</button>
 
-
-<footer>
-
-<p>© 2026 Pure Gold Invest</p>
-
+</
+  <footer>
+  <p>© 2026 Pure Gold Invest</p>
 </footer>
+
+
+<script>
+
+const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+async function loadUser(){
+
+  const { data } = await supabaseClient.auth.getUser();
+
+  if(data.user){
+
+    document.getElementById("welcome").innerText =
+    "Welcome, " + data.user.email;
+
+  }
+
+}
+
+
+loadUser();
+
+</script>
+
 
 </body>
 </html>
