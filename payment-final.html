@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pure Gold Invest - Bitcoin Payment</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🪙 Pure Gold Invest</h1>
+
+<p>Bitcoin Payment</p>
+
+</header>
+
+<section>
+
+<h2>Confirm Your Investment</h2>
+
+<p><strong>Amount to Invest</strong></p>
+
+<h3 id="amount">$0</h3>
+
+<p><strong>Profits Gained</strong></p>
+
+<h3 id="profit">$0</h3>
+
+<hr>
+
+<h2>Payment Instructions</h2>
+
+<p>
+Make your payment using <strong>Bitcoin (BTC)</strong>.
+</p>
+
+<p>
+If you already have a Bitcoin wallet, send your payment to the Bitcoin address provided below.
+</p>
+
+<p>
+If you do not have a Bitcoin wallet, you may visit a supported location such as <strong>Walmart</strong> or <strong>Walgreens</strong> to complete your Bitcoin transaction.
+</p>
+
+<p>
+After making payment, keep your receipt, take a clear picture of it, and upload it for confirmation.
+</p>
+<hr>
+
+<h2>Bitcoin Payment</h2>
+
+<p><strong>Bitcoin Address</strong></p>
+
+<p id="btcAddress">
+Your Bitcoin Address Will Appear Here
+</p>
+
+<br>
+
+<img
+id="btcQR"
+src=""
+alt="Bitcoin QR Code"
+width="220">
+
+<br><br>
+
+<h2>Upload Payment Receipt</h2>
+
+<input
+type="file"
+id="receipt">
+
+<br><br>
+
+<button id="submitPayment">
+Submit Payment
+</button>
+
+<br><br>
+
+<a href="dashboard-final.html">
+
+<button type="button">
+Back to Dashboard
+</button>
+
+</a>
+
+</section>
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+const amount = params.get("amount");
+const profit = params.get("profit");
+
+if(amount){
+    document.getElementById("amount").innerText =
+    "$" + Number(amount).toLocaleString();
+}
+
+if(profit){
+    document.getElementById("profit").innerText =
+    "$" + Number(profit).toLocaleString();
+}
+
+document.getElementById("submitPayment").addEventListener("click", function(){
+
+    alert("Payment submitted successfully. Your payment is now pending admin approval.");
+
+});
+
+</script>
+
+</body>
+</html>
