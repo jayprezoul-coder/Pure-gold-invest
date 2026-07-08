@@ -1,89 +1,138 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Pure Gold Invest - Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
+<title>Pure Gold Invest - Dashboard</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
 
 <body>
 
 <header>
-  <h1>🪙 Pure Gold Invest</h1>
-  <p id="welcome">Investor Dashboard</p>
+
+<h1>🪙 Pure Gold Invest</h1>
+
+<p id="welcome">Welcome</p>
+
 </header>
 
 
 <section>
 
-<h2>Available Gold Packages</h2>
+<h2>👤 My Profile</h2>
 
-<div>
+<p><strong>Name:</strong> <span id="fullname">Loading...</span></p>
 
-<h3>Package 1</h3>
+<p><strong>Email:</strong> <span id="email">Loading...</span></p>
 
-<p>Amount to Invest:</p>
-<h3>💵 $50,000</h3>
+<p><strong>Account Status:</strong> ✅ Verified</p>
 
-<p>Profits Gained:</p>
-<h3>📈 $500,000</h3>
+</section>
+
+
+<section>
+
+<h2>🪙 Available Gold Investment Packages</h2>
+
+
+<div class="card">
+
+<h3>Gold Investment Package</h3>
+
+<p><strong>Amount to Invest</strong></p>
+
+<h2>💵 $50,000</h2>
+
+<p><strong>Profits Gained</strong></p>
+
+<h2>📈 $500,000</h2>
+
+<p>🟢 Available</p>
+
+<a href="payment-final.html?amount=50000&profit=500000">
 
 <button>Select Package</button>
 
-</div>
+</a>
 
+</div>
 
 <br>
 
 
-<div>
+<div class="card">
 
-<h3>Package 2</h3>
+<h3>Gold Investment Package</h3>
 
-<p>Amount to Invest:</p>
-<h3>💵 $100,000</h3>
+<p><strong>Amount to Invest</strong></p>
 
-<p>Profits Gained:</p>
-<h3>📈 $1,500,000</h3>
+<h2>💵 $100,000</h2>
+
+<p><strong>Profits Gained</strong></p>
+
+<h2>📈 $1,500,000</h2>
+
+<p>🟢 Available</p>
+
+<a href="payment-final.html?amount=100000&profit=1500000">
 
 <button>Select Package</button>
+
+</a>
 
 </div>
 <br>
 
-<div>
+<div class="card">
 
-<h3>Package 3</h3>
+<h3>Gold Investment Package</h3>
 
-<p>Amount to Invest:</p>
-<h3>💵 $200,000</h3>
+<p><strong>Amount to Invest</strong></p>
 
-<p>Profits Gained:</p>
-<h3>📈 $2,500,000</h3>
+<h2>💵 $200,000</h2>
+
+<p><strong>Profits Gained</strong></p>
+
+<h2>📈 $2,500,000</h2>
+
+<p>🟢 Available</p>
+
+<a href="payment-final.html?amount=200000&profit=2500000">
 
 <button>Select Package</button>
+
+</a>
 
 </div>
 
-
 <br>
 
+<div class="card">
 
-<div>
+<h3>Gold Investment Package</h3>
 
-<h3>Package 4</h3>
+<p><strong>Amount to Invest</strong></p>
 
-<p>Amount to Invest:</p>
-<h3>💵 $300,000</h3>
+<h2>💵 $300,000</h2>
 
-<p>Profits Gained:</p>
-<h3>📈 $4,000,000</h3>
+<p><strong>Profits Gained</strong></p>
+
+<h2>📈 $4,000,000</h2>
+
+<p>🟢 Available</p>
+
+<a href="payment-final.html?amount=300000&profit=4000000">
 
 <button>Select Package</button>
+
+</a>
 
 </div>
 
@@ -92,62 +141,105 @@
 
 <section>
 
-<h2>Your Investment</h2>
+<h2>📂 My Investments</h2>
 
-<p>Selected Package: —</p>
+<p>You haven't purchased any gold packages yet.</p>
 
-<p>Payment Status: —</p>
-
-<p>Delivery Address: —</p>
-
-<p>Shipping Status: —</p>
+<p>Your approved and pending investments will appear here after payment confirmation.</p>
 
 </section>
 
 
 <section>
 
-<h2>Account</h2>
+<h2>🚚 Delivery Center</h2>
 
-<button>🔔 Notifications</button>
+<p>No delivery information available yet.</p>
 
-<button>💬 Message Admin</button>
+<p>Your shipping address and delivery updates will appear here after your payment has been approved.</p>
 
-</
-  <footer>
-  <p>© 2026 Pure Gold Invest</p>
+</section>
+
+
+<section>
+
+<h2>🔔 Notifications</h2>
+
+<p>No new notifications.</p>
+
+</section>
+
+
+<section>
+
+<h2>💬 Contact Admin</h2>
+
+<button>Message Admin</button>
+
+</section>
+
+
+<section>
+
+<button>Logout</button>
+
+</section>
+<footer>
+
+<p>© 2026 Pure Gold Invest. All rights reserved.</p>
+
 </footer>
-
 
 <script>
 
 const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+
 const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
 const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
+async function loadProfile(){
 
-async function loadUser(){
+const { data: { user } } =
+await supabaseClient.auth.getUser();
 
-  const { data } = await supabaseClient.auth.getUser();
+if(!user){
 
-  if(data.user){
+window.location.href = "login-final.html";
 
-    document.getElementById("welcome").innerText =
-    "Welcome, " + data.user.email;
-
-  }
+return;
 
 }
 
+document.getElementById("welcome").innerText =
+"Welcome, " + user.email;
 
-loadUser();
+document.getElementById("email").innerText =
+user.email;
+
+const { data } =
+await supabaseClient
+.from("profiles")
+.select("full_name")
+.eq("id", user.id)
+.single();
+
+if(data){
+
+document.getElementById("fullname").innerText =
+data.full_name;
+
+}
+
+}
+
+loadProfile();
 
 </script>
 
-
 </body>
+
 </html>
