@@ -4,6 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pure Gold Invest - Login</title>
   <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -17,25 +19,63 @@
 
 <h2>Login</h2>
 
-<form action="dashboard2.html">
+<form id="loginForm">
 
-<input type="text" placeholder="Username">
+<input id="email" type="email" placeholder="Email Address" required>
 <br><br>
 
-<input type="password" placeholder="Password">
+<input id="password" type="password" placeholder="Password" required>
 <br><br>
 
 <button type="submit">Login</button>
 
 </form>
 
+<p id="message"></p>
+
 <br>
 
 <a href="index-new.html">
-<button>Back Home</button>
+<button type="button">Back Home</button>
 </a>
 
 </section>
+
+
+<script>
+const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const message = document.getElementById("message");
+
+  message.innerText = "Logging in...";
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    message.innerText = error.message;
+    return;
+  }
+
+  message.innerText = "Login successful!";
+
+  window.location.href = "dashboard-final.html";
+});
+</script>
 
 </body>
 </html>
