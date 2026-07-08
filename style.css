@@ -49,3 +49,38 @@ footer {
   margin-top: 50px;
   color: #aaa;
 }
+header {
+  border-bottom: 1px solid #d4af37;
+  padding-bottom: 20px;
+}
+
+section {
+  background: #161616;
+  padding: 25px;
+  margin: 30px auto;
+  border-radius: 15px;
+  border: 1px solid #d4af37;
+  max-width: 650px;
+}
+
+input {
+  padding: 12px;
+  width: 80%;
+  border-radius: 8px;
+  border: 1px solid #d4af37;
+  background: #222;
+  color: white;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
