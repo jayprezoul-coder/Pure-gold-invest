@@ -13,7 +13,9 @@
 
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -24,17 +26,68 @@
 </header>
 
 
+
+<section class="summary">
+
+
+<div class="card">
+
+<h3>💰 Available Balance</h3>
+
+<h2 id="balance">$0.00</h2>
+
+</div>
+
+
+<div class="card">
+
+<h3>📈 Total Profit</h3>
+
+<h2 id="profit">$0.00</h2>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>🏦 Total Withdrawal</h3>
+
+<h2 id="withdrawal">$0.00</h2>
+
+</div>
+
+
+</section>
+
+
+
+
 <section>
 
 <h2>👤 My Profile</h2>
 
-<p><strong>Name:</strong> <span id="fullname">Loading...</span></p>
 
-<p><strong>Email:</strong> <span id="email">Loading...</span></p>
+<p>
+<strong>Name:</strong>
+<span id="fullname">Loading...</span>
+</p>
 
-<p><strong>Account Status:</strong> ✅ Verified</p>
+
+<p>
+<strong>Email:</strong>
+<span id="email">Loading...</span>
+</p>
+
+
+<p>
+<strong>Account Status:</strong>
+✅ Verified
+</p>
+
 
 </section>
+
 
 
 <section>
@@ -42,169 +95,134 @@
 <h2>🪙 Available Gold Investment Packages</h2>
 
 
-<div class="card">
+<div id="packages">
 
-<h3>Gold Investment Package</h3>
-
-<p><strong>Amount to Invest</strong></p>
-
-<h2>💵 $50,000</h2>
-
-<p><strong>Profits Gained</strong></p>
-
-<h2>📈 $500,000</h2>
-
-<p>🟢 Available</p>
-
-<a href="payment-final.html?amount=50000&profit=500000">
-
-<button>Select Package</button>
-
-</a>
+<p>Loading packages...</p>
 
 </div>
 
-<br>
-
-
-<div class="card">
-
-<h3>Gold Investment Package</h3>
-
-<p><strong>Amount to Invest</strong></p>
-
-<h2>💵 $100,000</h2>
-
-<p><strong>Profits Gained</strong></p>
-
-<h2>📈 $1,500,000</h2>
-
-<p>🟢 Available</p>
-
-<a href="payment-final.html?amount=100000&profit=1500000">
-
-<button>Select Package</button>
-
-</a>
-
-</div>
-<br>
-
-<div class="card">
-
-<h3>Gold Investment Package</h3>
-
-<p><strong>Amount to Invest</strong></p>
-
-<h2>💵 $200,000</h2>
-
-<p><strong>Profits Gained</strong></p>
-
-<h2>📈 $2,500,000</h2>
-
-<p>🟢 Available</p>
-
-<a href="payment-final.html?amount=200000&profit=2500000">
-
-<button>Select Package</button>
-
-</a>
-
-</div>
-
-<br>
-
-<div class="card">
-
-<h3>Gold Investment Package</h3>
-
-<p><strong>Amount to Invest</strong></p>
-
-<h2>💵 $300,000</h2>
-
-<p><strong>Profits Gained</strong></p>
-
-<h2>📈 $4,000,000</h2>
-
-<p>🟢 Available</p>
-
-<a href="payment-final.html?amount=300000&profit=4000000">
-
-<button>Select Package</button>
-
-</a>
-
-</div>
 
 </section>
-
-
 <section>
 
 <h2>📂 My Investments</h2>
 
-<p>You haven't purchased any gold packages yet.</p>
+<div id="investments">
 
-<p>Your approved and pending investments will appear here after payment confirmation.</p>
+<p>Loading investments...</p>
 
-</section>
-
-
-<section>
-
-<h2>🚚 Delivery Center</h2>
-
-<p>No delivery information available yet.</p>
-
-<p>Your shipping address and delivery updates will appear here after your payment has been approved.</p>
+</div>
 
 </section>
+
+
 
 
 <section>
 
 <h2>🔔 Notifications</h2>
 
+<div id="notifications">
+
 <p>No new notifications.</p>
 
+</div>
+
 </section>
+
+
+
+
+
+<section>
+
+<h2>🚚 Delivery Center</h2>
+
+
+<p id="delivery">
+
+No delivery information available yet.
+
+</p>
+
+
+</section>
+
+
+
 
 
 <section>
 
 <h2>💬 Contact Admin</h2>
 
-<button>Message Admin</button>
+
+<button>
+
+Message Admin
+
+</button>
+
 
 </section>
+
+
+
 
 
 <section>
 
-<button>Logout</button>
+<button onclick="logout()">
+
+Logout
+
+</button>
+
 
 </section>
+
+
+
 <footer>
 
-<p>© 2026 Pure Gold Invest. All rights reserved.</p>
+<p>
+© 2026 Pure Gold Invest. All rights reserved.
+</p>
 
 </footer>
 
+
+
+
 <script>
+
 
 const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
 
+
 const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
+
+
 const supabaseClient = supabase.createClient(
+
 SUPABASE_URL,
+
 SUPABASE_KEY
+
 );
 
-async function loadProfile(){
+
+
+
+async function loadDashboard(){
+
 
 const { data: { user } } =
+
 await supabaseClient.auth.getUser();
+
+
 
 if(!user){
 
@@ -214,31 +232,319 @@ return;
 
 }
 
+
+
 document.getElementById("welcome").innerText =
+
 "Welcome, " + user.email;
 
+
+
 document.getElementById("email").innerText =
+
 user.email;
 
-const { data } =
+
+
+const { data: profile } =
+
 await supabaseClient
+
 .from("profiles")
-.select("full_name")
+
+.select("*")
+
 .eq("id", user.id)
+
 .single();
 
-if(data){
+
+
+if(profile){
+
 
 document.getElementById("fullname").innerText =
-data.full_name;
+
+profile.full_name || "User";
+
+
+document.getElementById("balance").innerText =
+
+"$" + (profile.balance || 0);
+
+
+
+document.getElementById("profit").innerText =
+
+"$" + (profile.total_profit || 0);
+
+
+
+document.getElementById("withdrawal").innerText =
+
+"$" + (profile.total_withdrawal || 0);
+
 
 }
 
+
+
+const { data: packages } =
+
+await supabaseClient
+
+.from("gold_packages")
+
+.select("*");
+
+
+
+const packageBox = document.getElementById("packages");
+
+
+
+packageBox.innerHTML = "";
+
+
+
+packages.forEach(item => {
+
+
+packageBox.innerHTML += `
+
+
+<div class="card">
+
+
+<h3>🪙 ${item.name}</h3>
+
+
+<p>Amount to Invest</p>
+
+
+<h2>💵 $${item.price}</h2>
+
+
+<p>Profit</p>
+
+
+<h2>📈 $${item.profit}</h2>
+
+
+<p>🟢 Available</p>
+
+
+
+<a href="payment-final.html?package=${item.id}">
+
+<button>
+
+Select Package
+
+</button>
+
+</a>
+
+
+</div>
+
+
+`;
+
+});
+
+
+
+}
+  async function loadInvestments(){
+
+
+const { data: { user } } =
+
+await supabaseClient.auth.getUser();
+
+
+
+const { data } = await supabaseClient
+
+.from("purchases")
+
+.select("*")
+
+.eq("user_id", user.id)
+
+.order("created_at", { ascending:false });
+
+
+
+const box = document.getElementById("investments");
+
+
+
+if(!data || data.length === 0){
+
+box.innerHTML =
+
+"<p>You haven't purchased any gold packages yet.</p>";
+
+return;
+
 }
 
-loadProfile();
+
+
+box.innerHTML = "";
+
+
+
+data.forEach(item => {
+
+
+box.innerHTML += `
+
+
+<div class="card">
+
+
+<h3>🪙 Gold Investment</h3>
+
+
+<p>
+
+Amount: $${item.amount}
+
+</p>
+
+
+<p>
+
+Status: ${item.status}
+
+</p>
+
+
+<p>
+
+Date: ${item.created_at}
+
+</p>
+
+
+</div>
+
+
+`;
+
+});
+
+
+}
+
+
+
+
+
+async function loadNotifications(){
+
+
+
+const { data: { user } } =
+
+await supabaseClient.auth.getUser();
+
+
+
+
+const { data } = await supabaseClient
+
+.from("notifications")
+
+.select("*")
+
+.eq("user_id", user.id)
+
+.order("created_at", { ascending:false });
+
+
+
+const box = document.getElementById("notifications");
+
+
+
+if(!data || data.length === 0){
+
+
+box.innerHTML =
+
+"<p>No new notifications.</p>";
+
+return;
+
+
+}
+
+
+
+box.innerHTML = "";
+
+
+
+data.forEach(note => {
+
+
+
+box.innerHTML += `
+
+
+<div class="card">
+
+
+<p>
+
+🔔 ${note.message}
+
+</p>
+
+
+</div>
+
+
+`;
+
+
+});
+
+
+}
+
+
+
+
+
+async function logout(){
+
+
+await supabaseClient.auth.signOut();
+
+
+window.location.href = "login-final.html";
+
+
+}
+
+
+
+
+loadDashboard();
+
+loadInvestments();
+
+loadNotifications();
+
+
 
 </script>
+
 
 </body>
 
