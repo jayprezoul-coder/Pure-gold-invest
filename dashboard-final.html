@@ -27,6 +27,7 @@
 
 
 
+
 <section class="summary">
 
 
@@ -34,16 +35,17 @@
 
 <h3>💰 Available Balance</h3>
 
-<h2 id="balance">$0.00</h2>
+<h2 id="balance">$0</h2>
 
 </div>
+
 
 
 <div class="card">
 
 <h3>📈 Total Profit</h3>
 
-<h2 id="profit">$0.00</h2>
+<h2 id="profit">$0</h2>
 
 </div>
 
@@ -53,7 +55,7 @@
 
 <h3>🏦 Total Withdrawal</h3>
 
-<h2 id="withdrawal">$0.00</h2>
+<h2 id="withdrawal">$0</h2>
 
 </div>
 
@@ -70,19 +72,33 @@
 
 <p>
 <strong>Name:</strong>
-<span id="fullname">Loading...</span>
+
+<span id="fullname">
+Loading...
+</span>
+
 </p>
 
 
+
 <p>
+
 <strong>Email:</strong>
-<span id="email">Loading...</span>
+
+<span id="email">
+Loading...
+</span>
+
 </p>
 
 
+
 <p>
+
 <strong>Account Status:</strong>
+
 ✅ Verified
+
 </p>
 
 
@@ -90,43 +106,65 @@
 
 
 
+
+
 <section>
+
 
 <h2>🪙 Available Gold Investment Packages</h2>
 
 
 <div id="packages">
 
-<p>Loading packages...</p>
+
+<p>
+Loading packages...
+</p>
+
 
 </div>
 
 
 </section>
 <section>
+
 
 <h2>📂 My Investments</h2>
 
+
 <div id="investments">
 
-<p>Loading investments...</p>
+
+<p>
+Loading investments...
+</p>
+
 
 </div>
+
 
 </section>
 
 
 
 
+
 <section>
+
 
 <h2>🔔 Notifications</h2>
 
+
 <div id="notifications">
 
-<p>No new notifications.</p>
+
+<p>
+Loading notifications...
+</p>
+
 
 </div>
+
 
 </section>
 
@@ -135,6 +173,7 @@
 
 
 <section>
+
 
 <h2>🚚 Delivery Center</h2>
 
@@ -154,6 +193,7 @@ No delivery information available yet.
 
 <section>
 
+
 <h2>💬 Contact Admin</h2>
 
 
@@ -172,6 +212,7 @@ Message Admin
 
 <section>
 
+
 <button onclick="logout()">
 
 Logout
@@ -183,13 +224,20 @@ Logout
 
 
 
+
+
 <footer>
 
+
 <p>
+
 © 2026 Pure Gold Invest. All rights reserved.
+
 </p>
 
+
 </footer>
+
 
 
 
@@ -215,6 +263,7 @@ SUPABASE_KEY
 
 
 
+
 async function loadDashboard(){
 
 
@@ -226,11 +275,15 @@ await supabaseClient.auth.getUser();
 
 if(!user){
 
+
 window.location.href = "login-final.html";
+
 
 return;
 
+
 }
+
 
 
 
@@ -243,6 +296,8 @@ document.getElementById("welcome").innerText =
 document.getElementById("email").innerText =
 
 user.email;
+
+
 
 
 
@@ -260,12 +315,15 @@ await supabaseClient
 
 
 
+
+
 if(profile){
 
 
 document.getElementById("fullname").innerText =
 
 profile.full_name || "User";
+
 
 
 document.getElementById("balance").innerText =
@@ -289,13 +347,16 @@ document.getElementById("withdrawal").innerText =
 
 
 
+
 const { data: packages } =
 
 await supabaseClient
 
 .from("gold_packages")
 
-.select("*");
+.select("*")
+
+.eq("status","Available");
 
 
 
@@ -310,6 +371,7 @@ packageBox.innerHTML = "";
 packages.forEach(item => {
 
 
+
 packageBox.innerHTML += `
 
 
@@ -319,29 +381,42 @@ packageBox.innerHTML += `
 <h3>🪙 ${item.name}</h3>
 
 
-<p>Amount to Invest</p>
-
-
-<h2>💵 $${item.price}</h2>
-
-
-<p>Profit</p>
-
-
-<h2>📈 $${item.profit}</h2>
-
-
-<p>🟢 Available</p>
+<p>${item.description || ""}</p>
 
 
 
-<a href="payment-final.html?package=${item.id}">
+<p><strong>Amount to Invest</strong></p>
+
+
+<h2>💵 $${Number(item.price).toLocaleString()}</h2>
+
+
+
+
+<p><strong>Profit Gained</strong></p>
+
+
+<h2>📈 $${Number(item.profit).toLocaleString()}</h2>
+
+
+
+<p>
+
+🟢 ${item.status}
+
+</p>
+
+
+
+<a href="payment-final.html?amount=${item.price}&profit=${item.profit}">
+
 
 <button>
 
 Select Package
 
 </button>
+
 
 </a>
 
@@ -350,6 +425,8 @@ Select Package
 
 
 `;
+
+
 
 });
 
@@ -383,11 +460,13 @@ const box = document.getElementById("investments");
 
 if(!data || data.length === 0){
 
+
 box.innerHTML =
 
 "<p>You haven't purchased any gold packages yet.</p>";
 
 return;
+
 
 }
 
@@ -398,6 +477,7 @@ box.innerHTML = "";
 
 
 data.forEach(item => {
+
 
 
 box.innerHTML += `
@@ -411,14 +491,21 @@ box.innerHTML += `
 
 <p>
 
-Amount: $${item.amount}
+Amount: $${Number(item.amount).toLocaleString()}
 
 </p>
 
 
 <p>
 
-Status: ${item.status}
+Profit: $${Number(item.profit).toLocaleString()}
+
+</p>
+
+
+<p>
+
+Status: ${item.payment_status}
 
 </p>
 
@@ -435,10 +522,13 @@ Date: ${item.created_at}
 
 `;
 
+
 });
 
 
 }
+
+
 
 
 
@@ -467,6 +557,7 @@ const { data } = await supabaseClient
 
 
 
+
 const box = document.getElementById("notifications");
 
 
@@ -478,6 +569,7 @@ box.innerHTML =
 
 "<p>No new notifications.</p>";
 
+
 return;
 
 
@@ -485,7 +577,9 @@ return;
 
 
 
+
 box.innerHTML = "";
+
 
 
 
@@ -499,9 +593,16 @@ box.innerHTML += `
 <div class="card">
 
 
+<h3>
+
+${note.title}
+
+</h3>
+
+
 <p>
 
-🔔 ${note.message}
+${note.message}
 
 </p>
 
@@ -515,7 +616,10 @@ box.innerHTML += `
 });
 
 
+
 }
+
+
 
 
 
@@ -524,10 +628,13 @@ box.innerHTML += `
 async function logout(){
 
 
+
 await supabaseClient.auth.signOut();
 
 
+
 window.location.href = "login-final.html";
+
 
 
 }
@@ -535,9 +642,12 @@ window.location.href = "login-final.html";
 
 
 
+
 loadDashboard();
 
+
 loadInvestments();
+
 
 loadNotifications();
 
@@ -547,5 +657,6 @@ loadNotifications();
 
 
 </body>
+
 
 </html>
