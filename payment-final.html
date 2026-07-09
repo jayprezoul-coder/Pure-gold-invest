@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,9 @@
 
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -22,104 +25,307 @@
 
 </header>
 
+
+
 <section>
 
+
 <h2>Confirm Your Investment</h2>
+
 
 <p><strong>Amount to Invest</strong></p>
 
 <h3 id="amount">$0</h3>
 
+
+
 <p><strong>Profits Gained</strong></p>
 
 <h3 id="profit">$0</h3>
 
+
 <hr>
 
+
+
 <h2>Payment Instructions</h2>
+
 
 <p>
 Make your payment using <strong>Bitcoin (BTC)</strong>.
 </p>
 
-<p>
-If you already have a Bitcoin wallet, send your payment to the Bitcoin address provided below.
-</p>
 
 <p>
-If you do not have a Bitcoin wallet, you may visit a supported location such as <strong>Walmart</strong> or <strong>Walgreens</strong> to complete your Bitcoin transaction.
+Send your payment to the Bitcoin address provided below.
 </p>
 
+
 <p>
-After making payment, keep your receipt, take a clear picture of it, and upload it for confirmation.
+After payment, upload your receipt for admin confirmation.
 </p>
+
+
 <hr>
+
+
 
 <h2>Bitcoin Payment</h2>
 
+
 <p><strong>Bitcoin Address</strong></p>
 
+
 <p id="btcAddress">
+
 Your Bitcoin Address Will Appear Here
+
 </p>
+
+
 
 <br>
 
+
 <img
+
 id="btcQR"
+
 src=""
+
 alt="Bitcoin QR Code"
-width="220">
+
+width="220"
+
+>
+
+
 
 <br><br>
+
+
 
 <h2>Upload Payment Receipt</h2>
 
+
 <input
+
 type="file"
-id="receipt">
+
+id="receipt"
+
+accept="image/*"
+
+>
+
+
 
 <br><br>
+
 
 <button id="submitPayment">
+
 Submit Payment
+
 </button>
 
+
 <br><br>
+
 
 <a href="dashboard-final.html">
 
 <button type="button">
+
 Back to Dashboard
+
 </button>
 
 </a>
-
 </section>
+
+
 <script>
+
+
+const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+
+
+const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+
+
+
+const supabaseClient = supabase.createClient(
+
+SUPABASE_URL,
+
+SUPABASE_KEY
+
+);
+
+
+
 
 const params = new URLSearchParams(window.location.search);
 
+
+
 const amount = params.get("amount");
+
 const profit = params.get("profit");
 
+
+
+
 if(amount){
-    document.getElementById("amount").innerText =
-    "$" + Number(amount).toLocaleString();
+
+
+document.getElementById("amount").innerText =
+
+"$" + Number(amount).toLocaleString();
+
+
 }
+
+
 
 if(profit){
-    document.getElementById("profit").innerText =
-    "$" + Number(profit).toLocaleString();
+
+
+document.getElementById("profit").innerText =
+
+"$" + Number(profit).toLocaleString();
+
+
 }
 
-document.getElementById("submitPayment").addEventListener("click", function(){
 
-    alert("Payment submitted successfully. Your payment is now pending admin approval.");
+
+
+// Add your Bitcoin wallet address here later
+
+document.getElementById("btcAddress").innerText =
+
+"YOUR BITCOIN WALLET ADDRESS";
+
+
+
+// Add your QR code image link here later
+
+document.getElementById("btcQR").src =
+
+"YOUR BITCOIN QR CODE IMAGE";
+
+
+
+
+
+
+document.getElementById("submitPayment")
+
+.addEventListener("click", async function(){
+
+
+
+const { data: { user } } =
+
+await supabaseClient.auth.getUser();
+
+
+
+
+if(!user){
+
+
+alert("Please login first.");
+
+
+window.location.href = "login-final.html";
+
+
+return;
+
+
+}
+
+
+
+
+
+if(!amount){
+
+
+alert("Investment amount missing.");
+
+
+return;
+
+
+}
+
+
+
+
+
+const { data, error } =
+
+await supabaseClient
+
+.from("purchases")
+
+.insert([{
+
+
+user_id: user.id,
+
+
+amount: Number(amount),
+
+
+profit: Number(profit),
+
+
+status: "Pending Approval"
+
+
+
+}]);
+
+
+
+
+if(error){
+
+
+alert(error.message);
+
+
+return;
+
+
+}
+
+
+
+alert(
+
+"Payment submitted successfully. Your investment is now pending admin approval."
+
+);
+
+
+
+window.location.href = "dashboard-final.html";
+
+
 
 });
 
+
+
 </script>
 
+
 </body>
+
 </html>
