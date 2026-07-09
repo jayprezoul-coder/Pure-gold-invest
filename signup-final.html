@@ -4,7 +4,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pure Gold Invest - Create Account</title>
   <link rel="stylesheet" href="style.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -42,11 +41,12 @@
 <br>
 
 <a href="index-new.html">
-<button type="button">Back Home</button>
+  <button type="button">Back Home</button>
 </a>
 
 </section>
-  <script>
+
+<script>
 const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
@@ -68,33 +68,19 @@ signupForm.addEventListener("submit", async (e) => {
 
   message.innerText = "Creating account...";
 
-  const { data, error } = await supabaseClient.auth.signUp({
-    email: email,
-    password: password
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        username: username
+      }
+    }
   });
 
   if (error) {
     message.innerText = error.message;
-    return;
-  }
-
- const user = data.user;
-const session = data.session;
-
-console.log(session);
-
-  const { error: profileError } = await supabaseClient
-    .from("profiles")
-    .insert([
-      {
-        id: user.id,
-        full_name: fullName,
-        role: "user"
-      }
-    ]);
-
-  if (profileError) {
-    message.innerText = profileError.message;
     return;
   }
 
