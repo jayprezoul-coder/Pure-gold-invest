@@ -41,7 +41,7 @@
 <br>
 
 <a href="index-new.html">
-  <button type="button">Back Home</button>
+<button type="button">Back Home</button>
 </a>
 
 </section>
@@ -84,11 +84,17 @@ signupForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  message.innerText = "Account created successfully!";
+  const { error: loginError } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
 
-  setTimeout(() => {
-    window.location.href = "dashboard-final.html";
-  }, 2000);
+  if (loginError) {
+    message.innerText = "Account created, but automatic login failed. Please log in.";
+    return;
+  }
+
+  window.location.href = "dashboard-final.html";
 });
 </script>
 
