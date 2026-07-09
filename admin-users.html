@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Pure Gold Invest - Manage Users</title>
 
 <link rel="stylesheet" href="style.css">
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 </head>
@@ -16,74 +13,52 @@
 <body>
 
 <header>
-
 <h1>🪙 Pure Gold Invest</h1>
-
-<p id="welcome">Manage Users</p>
-
+<p id="welcome">Loading...</p>
 </header>
 
 <section>
 
-<h2>👥 Registered Users</h2>
-
-<p>
-View and manage all registered users.
-</p>
-
-</section>
-
-<section>
+<h2>👥 Manage Users</h2>
 
 <input
 type="text"
-id="searchUser"
+id="search"
 placeholder="Search by name or email">
 
 <br><br>
 
-<div id="usersList">
+<div id="users">
 
 <p>Loading users...</p>
 
 </div>
 
-</section>
-
-<section>
+<br>
 
 <a href="admin-dashboard.html">
-
 <button>
-
-⬅ Back to Admin Dashboard
-
+⬅ Back to Dashboard
 </button>
-
 </a>
 
 </section>
 
-<footer>
-
-<p>
-
-© 2026 Pure Gold Invest. All rights reserved.
-
-</p>
-
-</footer>
-
 <script>
 
-const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+const SUPABASE_URL =
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+const SUPABASE_KEY =
+"sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
-const supabaseClient = supabase.createClient(
+const supabaseClient =
+supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
+
+let allUsers = [];
 
 async function loadUsers(){
 
@@ -92,79 +67,136 @@ await supabaseClient.auth.getUser();
 
 if(!user){
 
-window.location.href="login-final.html";
+window.location.href =
+"login-final.html";
+
+return;
+
+}
+
+const { data: admin } =
+await supabaseClient
+.from("profiles")
+.select("role")
+.eq("id",user.id)
+.single();
+
+if(!admin || admin.role !== "admin"){
+
+alert("Access denied.");
+
+window.location.href =
+"dashboard-final.html";
 
 return;
 
 }
 
 document.getElementById("welcome").innerText =
-"Manage Users";
-  const { data: profile } = await supabaseClient
-.from("profiles")
-.select("role")
-.eq("id", user.id)
-.single();
+"Welcome Admin";
 
-if(!profile || profile.role !== "admin"){
-
-alert("Access denied.");
-
-window.location.href = "dashboard-final.html";
-
-return;
-
-}
-
-const { data: users } = await supabaseClient
+const { data } =
+await supabaseClient
 .from("profiles")
 .select("*")
-.order("created_at", { ascending: false });
+.order("created_at",{ascending:false});
 
-const usersList =
-document.getElementById("usersList");
+allUsers = data || [];
 
-usersList.innerHTML = "";
+displayUsers(allUsers);
 
-if(!users || users.length === 0){
+}
 
-usersList.innerHTML =
-"<p>No registered users found.</p>";
+function displayUsers(users){
+
+const box =
+document.getElementById("users");
+
+box.innerHTML = "";
+
+if(users.length===0){
+
+box.innerHTML =
+"<p>No users found.</p>";
 
 return;
 
 }
 
-users.forEach(item => {
+users.forEach(user=>{
 
-usersList.innerHTML += `
+box.innerHTML += `
 
 <div class="card">
 
-<h3>${item.full_name || "No Name"}</h3>
+<h3>${user.full_name || "No Name"}</h3>
 
-<p><strong>Email:</strong> ${item.email || "No Email"}</p>
+<p><strong>Email:</strong>
+${user.email || ""}</p>
 
-<p><strong>Available Balance:</strong> $${Number(item.balance || 0).toLocaleString()}</p>
+<p><strong>Phone:</strong>
+${user.phone || "-"}</p>
 
-<p><strong>Total Profit:</strong> $${Number(item.total_profit || 0).toLocaleString()}</p>
+<p><strong>Role:</strong>
+${user.role}</p>
 
-<p><strong>Total Withdrawal:</strong> $${Number(item.total_withdrawal || 0).toLocaleString()}</p>
+<p><strong>Available Balance:</strong>
+$${Number(user.available_balance || 0).toLocaleString()}</p>
 
-<p><strong>Role:</strong> ${item.role}</p>
+<p><strong>Total Profit:</strong>
+$${Number(user.total_profit || 0).toLocaleString()}</p>
 
-<p><strong>Status:</strong> ${item.account_status || "Verified"}</p>
+<p><strong>Amount Withdrawn:</strong>
+$${Number(user.amount_withdrawn || 0).toLocaleString()}</p>
 
-<button>Edit User</button>
+<button
+onclick="editUser('${user.id}')">
+
+Edit User
+
+</button>
+
+<hr>
 
 </div>
-
-<br>
 
 `;
 
 });
-  }
+
+}
+  document
+.getElementById("search")
+.addEventListener("input", function(){
+
+const value =
+this.value.toLowerCase();
+
+const filtered =
+allUsers.filter(user =>
+
+(user.full_name || "")
+.toLowerCase()
+.includes(value)
+
+||
+
+(user.email || "")
+.toLowerCase()
+.includes(value)
+
+);
+
+displayUsers(filtered);
+
+});
+
+function editUser(id){
+
+window.location.href =
+"admin-edit-user.html?id=" + id;
+
+}
 
 loadUsers();
 
