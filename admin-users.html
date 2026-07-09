@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pure Gold Invest - Manage Users</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🪙 Pure Gold Invest</h1>
+
+<p id="welcome">Manage Users</p>
+
+</header>
+
+<section>
+
+<h2>👥 Registered Users</h2>
+
+<p>
+View and manage all registered users.
+</p>
+
+</section>
+
+<section>
+
+<input
+type="text"
+id="searchUser"
+placeholder="Search by name or email">
+
+<br><br>
+
+<div id="usersList">
+
+<p>Loading users...</p>
+
+</div>
+
+</section>
+
+<section>
+
+<a href="admin-dashboard.html">
+
+<button>
+
+⬅ Back to Admin Dashboard
+
+</button>
+
+</a>
+
+</section>
+
+<footer>
+
+<p>
+
+© 2026 Pure Gold Invest. All rights reserved.
+
+</p>
+
+</footer>
+
+<script>
+
+const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+async function loadUsers(){
+
+const { data:{ user } } =
+await supabaseClient.auth.getUser();
+
+if(!user){
+
+window.location.href="login-final.html";
+
+return;
+
+}
+
+document.getElementById("welcome").innerText =
+"Manage Users";
+  const { data: profile } = await supabaseClient
+.from("profiles")
+.select("role")
+.eq("id", user.id)
+.single();
+
+if(!profile || profile.role !== "admin"){
+
+alert("Access denied.");
+
+window.location.href = "dashboard-final.html";
+
+return;
+
+}
+
+const { data: users } = await supabaseClient
+.from("profiles")
+.select("*")
+.order("created_at", { ascending: false });
+
+const usersList =
+document.getElementById("usersList");
+
+usersList.innerHTML = "";
+
+if(!users || users.length === 0){
+
+usersList.innerHTML =
+"<p>No registered users found.</p>";
+
+return;
+
+}
+
+users.forEach(item => {
+
+usersList.innerHTML += `
+
+<div class="card">
+
+<h3>${item.full_name || "No Name"}</h3>
+
+<p><strong>Email:</strong> ${item.email || "No Email"}</p>
+
+<p><strong>Available Balance:</strong> $${Number(item.balance || 0).toLocaleString()}</p>
+
+<p><strong>Total Profit:</strong> $${Number(item.total_profit || 0).toLocaleString()}</p>
+
+<p><strong>Total Withdrawal:</strong> $${Number(item.total_withdrawal || 0).toLocaleString()}</p>
+
+<p><strong>Role:</strong> ${item.role}</p>
+
+<p><strong>Status:</strong> ${item.account_status || "Verified"}</p>
+
+<button>Edit User</button>
+
+</div>
+
+<br>
+
+`;
+
+});
+  }
+
+loadUsers();
+
+</script>
+
+</body>
+
+</html>
