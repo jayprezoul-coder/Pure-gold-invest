@@ -72,33 +72,19 @@
 
 <p>
 <strong>Name:</strong>
-
-<span id="fullname">
-Loading...
-</span>
-
+<span id="fullname">Loading...</span>
 </p>
 
 
-
 <p>
-
 <strong>Email:</strong>
-
-<span id="email">
-Loading...
-</span>
-
+<span id="email">Loading...</span>
 </p>
 
 
-
 <p>
-
 <strong>Account Status:</strong>
-
 ✅ Verified
-
 </p>
 
 
@@ -109,74 +95,51 @@ Loading...
 
 
 <section>
-
 
 <h2>🪙 Available Gold Investment Packages</h2>
 
 
 <div id="packages">
 
-
-<p>
-Loading packages...
-</p>
-
+<p>Loading packages...</p>
 
 </div>
 
 
 </section>
 <section>
-
 
 <h2>📂 My Investments</h2>
 
-
 <div id="investments">
 
-
-<p>
-Loading investments...
-</p>
-
+<p>Loading investments...</p>
 
 </div>
-
 
 </section>
 
 
 
 
-
 <section>
-
 
 <h2>🔔 Notifications</h2>
 
-
 <div id="notifications">
 
-
-<p>
-Loading notifications...
-</p>
-
+<p>Loading notifications...</p>
 
 </div>
-
 
 </section>
 
 
 
 
-
 <section>
 
-
 <h2>🚚 Delivery Center</h2>
-
 
 <p id="delivery">
 
@@ -184,18 +147,14 @@ No delivery information available yet.
 
 </p>
 
-
 </section>
-
 
 
 
 
 <section>
 
-
 <h2>💬 Contact Admin</h2>
-
 
 <button>
 
@@ -203,15 +162,12 @@ Message Admin
 
 </button>
 
-
 </section>
 
 
 
 
-
 <section>
-
 
 <button onclick="logout()">
 
@@ -219,15 +175,12 @@ Logout
 
 </button>
 
-
 </section>
 
 
 
 
-
 <footer>
-
 
 <p>
 
@@ -235,9 +188,7 @@ Logout
 
 </p>
 
-
 </footer>
-
 
 
 
@@ -251,7 +202,6 @@ const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
 
-
 const supabaseClient = supabase.createClient(
 
 SUPABASE_URL,
@@ -263,11 +213,10 @@ SUPABASE_KEY
 
 
 
-
 async function loadDashboard(){
 
 
-const { data: { user } } =
+const { data:{ user } } =
 
 await supabaseClient.auth.getUser();
 
@@ -275,15 +224,11 @@ await supabaseClient.auth.getUser();
 
 if(!user){
 
-
 window.location.href = "login-final.html";
-
 
 return;
 
-
 }
-
 
 
 
@@ -301,9 +246,7 @@ user.email;
 
 
 
-const { data: profile } =
-
-await supabaseClient
+const { data: profile } = await supabaseClient
 
 .from("profiles")
 
@@ -316,7 +259,6 @@ await supabaseClient
 
 
 
-
 if(profile){
 
 
@@ -325,22 +267,21 @@ document.getElementById("fullname").innerText =
 profile.full_name || "User";
 
 
-
 document.getElementById("balance").innerText =
 
-"$" + (profile.balance || 0);
+"$" + Number(profile.balance || 0).toLocaleString();
 
 
 
 document.getElementById("profit").innerText =
 
-"$" + (profile.total_profit || 0);
+"$" + Number(profile.total_profit || 0).toLocaleString();
 
 
 
 document.getElementById("withdrawal").innerText =
 
-"$" + (profile.total_withdrawal || 0);
+"$" + Number(profile.total_withdrawal || 0).toLocaleString();
 
 
 }
@@ -348,23 +289,35 @@ document.getElementById("withdrawal").innerText =
 
 
 
-const { data: packages } =
-
-await supabaseClient
+const { data: packages } = await supabaseClient
 
 .from("gold_packages")
 
 .select("*")
 
-.eq("status","Available");
+.order("price", { ascending:true });
 
 
 
 const packageBox = document.getElementById("packages");
 
 
-
 packageBox.innerHTML = "";
+
+
+
+if(!packages || packages.length === 0){
+
+
+packageBox.innerHTML =
+
+"<p>No packages available.</p>";
+
+
+return;
+
+
+}
 
 
 
@@ -384,12 +337,10 @@ packageBox.innerHTML += `
 <p>${item.description || ""}</p>
 
 
-
 <p><strong>Amount to Invest</strong></p>
 
 
 <h2>💵 $${Number(item.price).toLocaleString()}</h2>
-
 
 
 
@@ -421,6 +372,7 @@ Select Package
 </a>
 
 
+
 </div>
 
 
@@ -431,12 +383,11 @@ Select Package
 });
 
 
-
 }
   async function loadInvestments(){
 
 
-const { data: { user } } =
+const { data:{ user } } =
 
 await supabaseClient.auth.getUser();
 
@@ -465,6 +416,7 @@ box.innerHTML =
 
 "<p>You haven't purchased any gold packages yet.</p>";
 
+
 return;
 
 
@@ -477,7 +429,6 @@ box.innerHTML = "";
 
 
 data.forEach(item => {
-
 
 
 box.innerHTML += `
@@ -498,7 +449,7 @@ Amount: $${Number(item.amount).toLocaleString()}
 
 <p>
 
-Profit: $${Number(item.profit).toLocaleString()}
+Profit: $${Number(item.profit || 0).toLocaleString()}
 
 </p>
 
@@ -506,13 +457,6 @@ Profit: $${Number(item.profit).toLocaleString()}
 <p>
 
 Status: ${item.payment_status}
-
-</p>
-
-
-<p>
-
-Date: ${item.created_at}
 
 </p>
 
@@ -538,10 +482,9 @@ async function loadNotifications(){
 
 
 
-const { data: { user } } =
+const { data:{ user } } =
 
 await supabaseClient.auth.getUser();
-
 
 
 
@@ -577,14 +520,11 @@ return;
 
 
 
-
 box.innerHTML = "";
 
 
 
-
 data.forEach(note => {
-
 
 
 box.innerHTML += `
@@ -593,18 +533,10 @@ box.innerHTML += `
 <div class="card">
 
 
-<h3>
-
-${note.title}
-
-</h3>
+<h3>${note.title}</h3>
 
 
-<p>
-
-${note.message}
-
-</p>
+<p>${note.message}</p>
 
 
 </div>
@@ -616,9 +548,7 @@ ${note.message}
 });
 
 
-
 }
-
 
 
 
@@ -628,13 +558,10 @@ ${note.message}
 async function logout(){
 
 
-
 await supabaseClient.auth.signOut();
 
 
-
 window.location.href = "login-final.html";
-
 
 
 }
@@ -645,9 +572,7 @@ window.location.href = "login-final.html";
 
 loadDashboard();
 
-
 loadInvestments();
-
 
 loadNotifications();
 
@@ -657,6 +582,5 @@ loadNotifications();
 
 
 </body>
-
 
 </html>
