@@ -78,7 +78,10 @@ signupForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  const user = data.user;
+ const user = data.user;
+const session = data.session;
+
+console.log(session);
 
   const { error: profileError } = await supabaseClient
     .from("profiles")
