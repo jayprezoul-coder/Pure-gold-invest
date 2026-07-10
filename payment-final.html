@@ -39,7 +39,7 @@
 
 
 
-<p><strong>Profits Gained</strong></p>
+<p><strong>Expected Profit</strong></p>
 
 <h3 id="profit">$0</h3>
 
@@ -48,33 +48,13 @@
 
 
 
-<h2>Payment Instructions</h2>
+<h2>₿ Bitcoin Payment</h2>
 
 
-<p>
-Make your payment using <strong>Bitcoin (BTC)</strong>.
-</p>
+<p><strong>Bitcoin Wallet Address</strong></p>
 
 
-<p>
-Send your payment to the Bitcoin address provided below.
-</p>
-
-
-<p>
-After payment, upload your receipt for admin confirmation.
-</p>
-
-
-<hr>
-
-
-
-<h2>Bitcoin Payment</h2>
-
-
-<p><strong>Bitcoin Address</strong></p>
-
+<div>
 
 <p id="btcAddress">
 
@@ -83,8 +63,18 @@ Your Bitcoin Address Will Appear Here
 </p>
 
 
+<button id="copyWallet">
+
+📋 Copy Wallet Address
+
+</button>
+
+</div>
+
+
 
 <br>
+
 
 
 <img
@@ -101,18 +91,52 @@ width="220"
 
 
 
-<br><br>
+<hr>
 
 
 
-<h2>Upload Payment Receipt</h2>
+<h2>📝 Payment Instructions</h2>
+
+
+<p>
+1. Send the exact payment amount to the Bitcoin wallet address shown above or scan the QR code.
+</p>
+
+
+<p>
+2. Please double-check the Bitcoin wallet address before sending your payment.
+</p>
+
+
+<p>
+3. If you do not have a Bitcoin account or do not know how to send Bitcoin, you may visit Walmart, Walgreens, or another Bitcoin-enabled store or cryptocurrency service in your area for assistance. Services may vary by location.
+</p>
+
+
+<p>
+4. After completing your payment, take a clear screenshot or save your payment confirmation.
+</p>
+
+
+<p>
+5. Upload your payment proof below and click Submit Payment.
+</p>
+
+
+<p>
+6. If you need help or do not understand any part of the process, please contact Customer Care.
+</p>
+
+
+<hr>
+<h2>📤 Upload Payment Proof</h2>
 
 
 <input
 
 type="file"
 
-id="receipt"
+id="proofFile"
 
 accept="image/*"
 
@@ -125,7 +149,7 @@ accept="image/*"
 
 <button id="submitPayment">
 
-Submit Payment
+✅ Submit Payment
 
 </button>
 
@@ -142,17 +166,21 @@ Back to Dashboard
 </button>
 
 </a>
+
+
 </section>
+
 
 
 <script>
 
 
-const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+const SUPABASE_URL = 
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
 
 
-const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
-
+const SUPABASE_KEY = 
+"sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
 
 const supabaseClient = supabase.createClient(
@@ -162,7 +190,6 @@ SUPABASE_URL,
 SUPABASE_KEY
 
 );
-
 
 
 
@@ -176,14 +203,11 @@ const profit = params.get("profit");
 
 
 
-
 if(amount){
-
 
 document.getElementById("amount").innerText =
 
 "$" + Number(amount).toLocaleString();
-
 
 }
 
@@ -191,26 +215,22 @@ document.getElementById("amount").innerText =
 
 if(profit){
 
-
 document.getElementById("profit").innerText =
 
 "$" + Number(profit).toLocaleString();
-
 
 }
 
 
 
 
-// Add your Bitcoin wallet address here later
+// Temporary wallet information
+// We will connect this to Admin Bitcoin Settings later
 
 document.getElementById("btcAddress").innerText =
 
 "YOUR BITCOIN WALLET ADDRESS";
 
-
-
-// Add your QR code image link here later
 
 document.getElementById("btcQR").src =
 
@@ -219,55 +239,120 @@ document.getElementById("btcQR").src =
 
 
 
+document.getElementById("copyWallet")
+
+.addEventListener("click", ()=>{
+
+
+const wallet = 
+
+document.getElementById("btcAddress").innerText;
+
+
+navigator.clipboard.writeText(wallet);
+
+
+alert("Bitcoin wallet address copied.");
+
+
+
+});
+
 
 
 document.getElementById("submitPayment")
 
-.addEventListener("click", async function(){
+.addEventListener("click", async ()=>{
 
 
-
-const { data: { user } } =
+const { data:{ user } } =
 
 await supabaseClient.auth.getUser();
 
 
-
-
 if(!user){
-
 
 alert("Please login first.");
 
-
 window.location.href = "login-final.html";
-
 
 return;
 
-
 }
-
-
 
 
 
 if(!amount){
 
-
 alert("Investment amount missing.");
-
 
 return;
 
+}
+  const file = document.getElementById("proofFile").files[0];
+
+
+if(!file){
+
+alert("Please upload your payment proof.");
+
+return;
+
+}
+
+
+// Create file name
+
+const fileName =
+
+user.id + "_" + Date.now() + "_" + file.name;
+
+
+
+// Upload proof image
+
+const { data: uploadData, error: uploadError } =
+
+await supabaseClient.storage
+
+.from("payment-proofs")
+
+.upload(fileName, file);
+
+
+
+if(uploadError){
+
+alert(uploadError.message);
+
+return;
 
 }
 
 
 
+// Get public URL
+
+const { data: urlData } =
+
+supabaseClient.storage
+
+.from("payment-proofs")
+
+.getPublicUrl(fileName);
 
 
-const { data, error } =
+
+const proofUrl =
+
+urlData.publicUrl;
+
+
+
+
+// Save payment
+
+const { error } =
 
 await supabaseClient
 
@@ -275,33 +360,27 @@ await supabaseClient
 
 .insert([{
 
-
 user_id: user.id,
-
 
 amount: Number(amount),
 
+payment_method: "Bitcoin",
 
-profit: Number(profit),
+payment_reference: "BTC Payment",
 
+payment_status: "Pending Approval",
 
-payment_status: "Pending Approval"
-
-
+proof_url: proofUrl
 
 }]);
 
 
 
-
 if(error){
-
 
 alert(error.message);
 
-
 return;
-
 
 }
 
@@ -309,13 +388,15 @@ return;
 
 alert(
 
-"Payment submitted successfully. Your investment is now pending admin approval."
+"Payment submitted successfully. Your payment is now waiting for approval."
 
 );
 
 
 
-window.location.href = "dashboard-final.html";
+window.location.href =
+
+"dashboard-final.html";
 
 
 
