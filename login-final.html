@@ -1,83 +1,125 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pure Gold Invest - Login</title>
 
-  <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Pure Gold Invest - Login</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
+
 
 <body>
 
+
 <header>
-  <h1>🪙 Pure Gold Invest</h1>
-  <p>Secure Account Login</p>
+
+<h1>🪙 Pure Gold Invest</h1>
+
+<p>Secure Account Login</p>
+
 </header>
 
 
+
 <section>
+
 
 <h2>Login</h2>
 
 
 <form id="loginForm">
 
-<input 
-id="email" 
-type="email" 
-placeholder="Email Address" 
-required>
+
+<input
+
+id="email"
+
+type="email"
+
+placeholder="Email Address"
+
+required
+
+>
+
 
 <br><br>
 
 
-<input 
-id="password" 
-type="password" 
-placeholder="Password" 
-required>
+
+<input
+
+id="password"
+
+type="password"
+
+placeholder="Password"
+
+required
+
+>
+
 
 <br><br>
+
 
 
 <button type="submit">
+
 Login
+
 </button>
 
+
 </form>
+
 
 
 <p id="message"></p>
 
 
+
 <br>
 
+
 <a href="index-new.html">
+
 <button type="button">
+
 Back Home
+
 </button>
+
 </a>
+
 
 
 <br><br>
 
 
+
 <p>Don't have an account?</p>
 
 
+
 <a href="signup-final.html">
+
 <button type="button">
+
 Create Account
+
 </button>
+
 </a>
 
 
 </section>
-
-
-
 <script>
 
 
@@ -89,16 +131,21 @@ const SUPABASE_KEY =
 "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
 
-const supabaseClient = 
-supabase.createClient(
+const supabaseClient = supabase.createClient(
+
 SUPABASE_URL,
+
 SUPABASE_KEY
+
 );
 
 
 
+
 document
+
 .getElementById("loginForm")
+
 .addEventListener("submit", async (e)=>{
 
 
@@ -107,27 +154,34 @@ e.preventDefault();
 
 
 const email =
+
 document.getElementById("email").value;
 
 
+
 const password =
+
 document.getElementById("password").value;
 
 
+
 const message =
+
 document.getElementById("message");
 
 
 
 message.innerText =
+
 "Logging in...";
+
+
 
 
 
 const { data, error } =
 
-await supabaseClient.auth
-.signInWithPassword({
+await supabaseClient.auth.signInWithPassword({
 
 email,
 
@@ -137,14 +191,30 @@ password
 
 
 
+
 if(error){
 
-message.innerText =
-error.message;
+
+message.innerText = error.message;
+
 
 return;
 
+
 }
+
+
+
+
+
+await supabaseClient.auth.setSession({
+
+access_token: data.session.access_token,
+
+refresh_token: data.session.refresh_token
+
+});
+
 
 
 
@@ -164,27 +234,38 @@ await supabaseClient
 
 
 
+
 if(profileError){
 
-message.innerText =
-profileError.message;
+
+message.innerText = profileError.message;
+
 
 return;
+
 
 }
 
 
 
 
+
 message.innerText =
+
 "Login successful!";
 
+
+
+
+
+setTimeout(()=>{
 
 
 if(profile.role === "admin"){
 
 
 window.location.href =
+
 "admin-dashboard.html";
 
 
@@ -192,10 +273,16 @@ window.location.href =
 
 
 window.location.href =
+
 "dashboard-final.html";
 
 
 }
+
+
+},1000);
+
+
 
 
 
@@ -205,5 +292,7 @@ window.location.href =
 </script>
 
 
+
 </body>
+
 </html>
