@@ -57,9 +57,7 @@
 <div>
 
 <p id="btcAddress">
-
 Your Bitcoin Address Will Appear Here
-
 </p>
 
 
@@ -76,7 +74,6 @@ Your Bitcoin Address Will Appear Here
 <br>
 
 
-
 <img
 
 id="btcQR"
@@ -90,9 +87,7 @@ width="220"
 >
 
 
-
 <hr>
-
 
 
 <h2>📝 Payment Instructions</h2>
@@ -154,6 +149,7 @@ accept="image/*"
 </button>
 
 
+
 <br><br>
 
 
@@ -180,7 +176,7 @@ const SUPABASE_URL =
 
 
 const SUPABASE_KEY = 
-"sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+"sb_publishable_p8xWtXed8AjaVKhdPhOgQ_Qwk2rAaH";
 
 
 const supabaseClient = supabase.createClient(
@@ -193,8 +189,8 @@ SUPABASE_KEY
 
 
 
-const params = new URLSearchParams(window.location.search);
 
+const params = new URLSearchParams(window.location.search);
 
 
 const amount = params.get("amount");
@@ -224,12 +220,11 @@ document.getElementById("profit").innerText =
 
 
 
-// Temporary wallet information
-// We will connect this to Admin Bitcoin Settings later
 
 document.getElementById("btcAddress").innerText =
 
 "YOUR BITCOIN WALLET ADDRESS";
+
 
 
 document.getElementById("btcQR").src =
@@ -239,9 +234,10 @@ document.getElementById("btcQR").src =
 
 
 
+
 document.getElementById("copyWallet")
 
-.addEventListener("click", ()=>{
+.addEventListener("click", async ()=>{
 
 
 const wallet = 
@@ -249,7 +245,7 @@ const wallet =
 document.getElementById("btcAddress").innerText;
 
 
-navigator.clipboard.writeText(wallet);
+await navigator.clipboard.writeText(wallet);
 
 
 alert("Bitcoin wallet address copied.");
@@ -257,10 +253,7 @@ alert("Bitcoin wallet address copied.");
 
 
 });
-
-
-
-document.getElementById("submitPayment")
+  document.getElementById("submitPayment")
 
 .addEventListener("click", async ()=>{
 
@@ -268,6 +261,7 @@ document.getElementById("submitPayment")
 const { data:{ user } } =
 
 await supabaseClient.auth.getUser();
+
 
 
 if(!user){
@@ -289,7 +283,11 @@ alert("Investment amount missing.");
 return;
 
 }
-  const file = document.getElementById("proofFile").files[0];
+
+
+
+const file = document.getElementById("proofFile").files[0];
+
 
 
 if(!file){
@@ -301,7 +299,7 @@ return;
 }
 
 
-// Create file name
+
 
 const fileName =
 
@@ -309,15 +307,17 @@ user.id + "_" + Date.now() + "_" + file.name;
 
 
 
-// Upload proof image
 
-const { data: uploadData, error: uploadError } =
+
+const { error: uploadError } =
 
 await supabaseClient.storage
 
-.from("payment-proofs")
+.from("payment-receipts")
 
 .upload(fileName, file);
+
+
 
 
 
@@ -331,7 +331,7 @@ return;
 
 
 
-// Get public URL
+
 
 const { data: urlData } =
 
@@ -343,14 +343,12 @@ supabaseClient.storage
 
 
 
-const proofUrl =
-
-urlData.publicUrl;
+const proofUrl = urlData.publicUrl;
 
 
 
 
-// Save payment
+
 
 const { error } =
 
@@ -376,6 +374,9 @@ proof_url: proofUrl
 
 
 
+
+
+
 if(error){
 
 alert(error.message);
@@ -386,9 +387,11 @@ return;
 
 
 
+
+
 alert(
 
-"Payment submitted successfully. Your payment is now waiting for approval."
+"✅ Payment submitted successfully. Your payment is now under review."
 
 );
 
