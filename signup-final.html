@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Pure Gold Invest - Create Account</title>
 
 <link rel="stylesheet" href="style.css">
@@ -10,40 +13,60 @@
 
 </head>
 
+
 <body>
 
+
 <header>
+
 <h1>🪙 Pure Gold Invest</h1>
+
 <p>Create your investment account</p>
+
 </header>
 
 
+
 <section>
+
 
 <h2>Create Account</h2>
 
 
 <form id="signupForm">
 
-<input id="fullName" type="text" placeholder="Full Name" required>
+
+<input 
+id="fullName"
+type="text"
+placeholder="Full Name"
+required>
 
 <br><br>
 
-<input id="email" type="email" placeholder="Email Address" required>
+
+<input 
+id="email"
+type="email"
+placeholder="Email Address"
+required>
 
 <br><br>
 
-<input id="username" type="text" placeholder="Username" required>
+
+<input 
+id="password"
+type="password"
+placeholder="Create Password"
+required>
 
 <br><br>
 
-<input id="password" type="password" placeholder="Create Password" required>
-
-<br><br>
 
 <button type="submit">
 Create Account
 </button>
+
 
 </form>
 
@@ -51,7 +74,20 @@ Create Account
 <p id="message"></p>
 
 
+<br>
+
+
+<a href="login-final.html">
+
+<button type="button">
+Already have an account? Login
+</button>
+
+</a>
+
+
 </section>
+
 
 
 
@@ -91,13 +127,8 @@ const email =
 document.getElementById("email").value;
 
 
-const username =
-document.getElementById("username").value;
-
-
 const password =
 document.getElementById("password").value;
-
 
 
 const message =
@@ -110,13 +141,23 @@ message.innerText =
 
 
 
-const { data, error } =
+const { error } =
 
 await supabaseClient.auth.signUp({
 
 email,
 
 password,
+
+options: {
+
+data: {
+
+full_name: fullName
+
+}
+
+}
 
 });
 
@@ -133,54 +174,18 @@ return;
 
 
 
-const user =
-data.user;
-
-
-
-const { error: profileError } =
-
-await supabaseClient
-
-.from("profiles")
-
-.insert({
-
-id: user.id,
-
-full_name: fullName,
-
-email: email,
-
-role: "user",
-
-available_balance: 0,
-
-total_profit: 0,
-
-amount_withdrawn: 0
-
-});
-
-
-
-if(profileError){
-
 message.innerText =
-profileError.message;
-
-return;
-
-}
+"Account created successfully! Please login.";
 
 
 
-message.innerText =
-"Account created successfully!";
-
+setTimeout(()=>{
 
 window.location.href =
 "login-final.html";
+
+},1500);
+
 
 
 });
@@ -190,4 +195,5 @@ window.location.href =
 
 
 </body>
+
 </html>
