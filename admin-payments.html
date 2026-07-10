@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<title>Admin Payment Approval</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Payment Approval</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -12,8 +13,8 @@
 
 body{
 font-family:Arial,sans-serif;
-padding:20px;
 background:#f4f4f4;
+padding:20px;
 }
 
 h1{
@@ -21,34 +22,37 @@ text-align:center;
 }
 
 .payment-card{
-
-background:white;
+background:#fff;
 padding:15px;
-margin:15px 0;
+margin-bottom:15px;
 border-radius:10px;
-
+box-shadow:0 2px 5px rgba(0,0,0,.1);
 }
 
 button{
-
-background:green;
-color:white;
 border:none;
-padding:10px 15px;
+padding:10px 18px;
 border-radius:5px;
+color:white;
+cursor:pointer;
+margin-right:10px;
+}
 
+.approve{
+background:green;
+}
+
+.reject{
+background:red;
 }
 
 </style>
 
 </head>
 
-
 <body>
 
-
 <h1>Admin Payments</h1>
-
 
 <div id="paymentsList">
 
@@ -56,41 +60,27 @@ Loading payments...
 
 </div>
 
-
 <script>
 
+const supabaseUrl =
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
 
-// YOUR EXISTING SUPABASE CONNECTION GOES HERE
+const supabaseKey =
+"sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
-const supabaseUrl = "https://jjydxddxxcqxgegkfgnh.supabase.co";
-
-const supabaseKey = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
-
-
-const supabaseClient = supabase.createClient(
+const supabaseClient =
+supabase.createClient(
 supabaseUrl,
 supabaseKey
 );
 
-
-
 async function loadPayments(){
 
-
-const {data,error}=await supabaseClient
+const { data, error } =
+await supabaseClient
 .from("payments")
-.select("*");
-
-
-if(error){
-
-document.getElementById("paymentsList").innerHTML =
-error.message;
-
-return;
-
-}
-
+.select("*")
+.order("created_at",{ascending:false});
 
 if(error){
 
@@ -101,54 +91,55 @@ return;
 
 }
 
+let html = "";
 
+if(data.length===0){
 
-let html="";
+html="<p>No payments found.</p>";
 
-
+}
 
 data.forEach(payment=>{
-
 
 html += `
 
 <div class="payment-card">
 
-<p>User ID: ${payment.user_id}</p>
+<p><strong>User ID:</strong> ${payment.user_id}</p>
 
-<p>Amount: $${payment.amount}</p>
+<p><strong>Package ID:</strong> ${payment.package_id}</p>
 
-<p>Status: ${payment.payment_status}</p>
+<p><strong>Amount:</strong>
+$${Number(payment.amount).toLocaleString()}</p>
 
+<p><strong>Status:</strong>
+${payment.payment_status}</p>
 
-<button onclick="approvePayment('${payment.id}')">
+<button
+class="approve"
+onclick="approvePayment('${payment.id}')">
 
 Approve
 
 </button>
 
+<button
+class="reject"
+onclick="rejectPayment('${payment.id}')">
+
+Reject
+
+</button>
 
 </div>
 
 `;
 
-
-
 });
 
-
-
-document.getElementById("paymentsList").innerHTML=html;
-
-
-
-}
-
-
-
-loadPayments();
+document.getElementById("paymentsList").innerHTML =
+html;
   async function approvePayment(id){
-
 
 // Get payment details
 
@@ -159,8 +150,6 @@ await supabaseClient
 .eq("id", id)
 .single();
 
-
-
 if(paymentError){
 
 alert(paymentError.message);
@@ -170,8 +159,25 @@ return;
 }
 
 
+// Get selected gold package
 
-// Create purchase record
+const { data: goldPackage, error: packageError } =
+await supabaseClient
+.from("gold_packages")
+.select("*")
+.eq("id", payment.package_id)
+.single();
+
+if(packageError){
+
+alert(packageError.message);
+
+return;
+
+}
+
+
+// Create purchase
 
 const { data: purchase, error: purchaseError } =
 await supabaseClient
@@ -186,13 +192,11 @@ amount: payment.amount,
 
 payment_status: "Approved",
 
-profit: 0
+profit: goldPackage.profit
 
 }])
 .select()
 .single();
-
-
 
 if(purchaseError){
 
@@ -201,7 +205,6 @@ alert(purchaseError.message);
 return;
 
 }
-
 
 
 // Update payment
@@ -218,8 +221,6 @@ purchase_id:purchase.id
 })
 .eq("id",id);
 
-
-
 if(updateError){
 
 alert(updateError.message);
@@ -227,7 +228,6 @@ alert(updateError.message);
 return;
 
 }
-
 
 
 // Send notification
@@ -252,7 +252,75 @@ is_read:false
 
 }]);
 
+if(notificationError){
 
+alert(notificationError.message);
+
+return;
+
+}
+
+alert("Payment approved successfully");
+
+loadPayments();
+
+}
+  async function rejectPayment(id){
+
+const { data: payment, error: paymentError } =
+await supabaseClient
+.from("payments")
+.select("*")
+.eq("id", id)
+.single();
+
+if(paymentError){
+
+alert(paymentError.message);
+
+return;
+
+}
+
+
+const { error: updateError } =
+await supabaseClient
+.from("payments")
+.update({
+
+payment_status:"Rejected"
+
+})
+.eq("id",id);
+
+if(updateError){
+
+alert(updateError.message);
+
+return;
+
+}
+
+
+const { error: notificationError } =
+await supabaseClient
+.from("notifications")
+.insert([{
+
+user_id: payment.user_id,
+
+title:"Payment Rejected",
+
+message:
+"Unfortunately, your payment of $" +
+Number(payment.amount).toLocaleString() +
+" was rejected. Please contact support or submit a new payment.",
+
+status:"Unread",
+
+is_read:false
+
+}]);
 
 if(notificationError){
 
@@ -262,17 +330,15 @@ return;
 
 }
 
-
-
-alert("Payment approved successfully");
-
+alert("Payment rejected successfully");
 
 loadPayments();
 
-
 }
-  </script>
 
+loadPayments();
+
+</script>
 
 </body>
 
