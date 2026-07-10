@@ -1,6 +1,148 @@
-async function approvePayment(id){
+<!DOCTYPE html>
+<html>
+<head>
 
-// Get the payment
+<title>Admin Payment Approval</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+padding:20px;
+background:#f4f4f4;
+}
+
+h1{
+text-align:center;
+}
+
+.payment-card{
+
+background:white;
+padding:15px;
+margin:15px 0;
+border-radius:10px;
+
+}
+
+button{
+
+background:green;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:5px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>Admin Payments</h1>
+
+
+<div id="paymentsList">
+
+Loading payments...
+
+</div>
+
+
+<script>
+
+
+// YOUR EXISTING SUPABASE CONNECTION GOES HERE
+
+const supabaseUrl = "PASTE YOUR SUPABASE URL HERE";
+
+const supabaseKey = "PASTE YOUR SUPABASE ANON KEY HERE";
+
+
+const supabaseClient = supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
+
+
+
+async function loadPayments(){
+
+
+const {data,error}=await supabaseClient
+.from("payments")
+.select("*")
+.order("created_at",{ascending:false});
+
+
+
+if(error){
+
+document.getElementById("paymentsList").innerHTML =
+error.message;
+
+return;
+
+}
+
+
+
+let html="";
+
+
+
+data.forEach(payment=>{
+
+
+html += `
+
+<div class="payment-card">
+
+<p>User ID: ${payment.user_id}</p>
+
+<p>Amount: $${payment.amount}</p>
+
+<p>Status: ${payment.payment_status}</p>
+
+
+<button onclick="approvePayment('${payment.id}')">
+
+Approve
+
+</button>
+
+
+</div>
+
+`;
+
+
+
+});
+
+
+
+document.getElementById("paymentsList").innerHTML=html;
+
+
+
+}
+
+
+
+loadPayments();
+  async function approvePayment(id){
+
+
+// Get payment details
 
 const { data: payment, error: paymentError } =
 await supabaseClient
@@ -8,6 +150,8 @@ await supabaseClient
 .select("*")
 .eq("id", id)
 .single();
+
+
 
 if(paymentError){
 
@@ -17,7 +161,9 @@ return;
 
 }
 
-// Create the purchase
+
+
+// Create purchase record
 
 const { data: purchase, error: purchaseError } =
 await supabaseClient
@@ -38,6 +184,8 @@ profit: 0
 .select()
 .single();
 
+
+
 if(purchaseError){
 
 alert(purchaseError.message);
@@ -45,20 +193,24 @@ alert(purchaseError.message);
 return;
 
 }
-// Link the payment to the purchase
-// and mark it as approved
+
+
+
+// Update payment
 
 const { error: updateError } =
 await supabaseClient
 .from("payments")
 .update({
 
-payment_status: "Approved",
+payment_status:"Approved",
 
-purchase_id: purchase.id
+purchase_id:purchase.id
 
 })
-.eq("id", id);
+.eq("id",id);
+
+
 
 if(updateError){
 
@@ -68,7 +220,9 @@ return;
 
 }
 
-// Create a notification
+
+
+// Send notification
 
 const { error: notificationError } =
 await supabaseClient
@@ -77,18 +231,20 @@ await supabaseClient
 
 user_id: payment.user_id,
 
-title: "Payment Approved",
+title:"Payment Approved",
 
 message:
 "Your payment of $" +
 Number(payment.amount).toLocaleString() +
 " has been approved successfully. Your investment is now active.",
 
-status: "Unread",
+status:"Unread",
 
-is_read: false
+is_read:false
 
 }]);
+
+
 
 if(notificationError){
 
@@ -97,5 +253,19 @@ alert(notificationError.message);
 return;
 
 }
-package_id: null,
-profit: 0
+
+
+
+alert("Payment approved successfully");
+
+
+loadPayments();
+
+
+}
+  </script>
+
+
+</body>
+
+</html>
