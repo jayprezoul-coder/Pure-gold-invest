@@ -103,11 +103,9 @@ async function loadPayments(){
 
 const { data, error } =
 await supabaseClient
-.from("payments")
+.from("admin_payment_view")
 .select("*")
 .order("created_at",{ascending:false});
-
-
 if(error){
 
 alert(error.message);
