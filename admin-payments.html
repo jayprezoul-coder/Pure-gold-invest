@@ -22,37 +22,54 @@ text-align:center;
 }
 
 .payment-card{
-background:#fff;
-padding:15px;
+
+background:white;
+padding:20px;
 margin-bottom:15px;
 border-radius:10px;
 box-shadow:0 2px 5px rgba(0,0,0,.1);
+
 }
 
 button{
+
 border:none;
 padding:10px 18px;
 border-radius:5px;
 color:white;
 cursor:pointer;
 margin-right:10px;
+
 }
 
 .approve{
+
 background:green;
+
 }
 
 .reject{
+
 background:red;
+
+}
+
+.proof{
+
+background:#333;
+
 }
 
 </style>
 
 </head>
 
+
 <body>
 
-<h1>Admin Payments</h1>
+
+<h1>💳 Admin Payments</h1>
+
 
 <div id="paymentsList">
 
@@ -60,13 +77,18 @@ Loading payments...
 
 </div>
 
+
+
 <script>
+
 
 const supabaseUrl =
 "https://jjydxddxxcqxgegkfgnh.supabase.co";
 
+
 const supabaseKey =
 "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+
 
 const supabaseClient =
 supabase.createClient(
@@ -74,13 +96,28 @@ supabaseUrl,
 supabaseKey
 );
 
+
+
 async function loadPayments(){
+
 
 const { data, error } =
 await supabaseClient
 .from("payments")
-.select("*")
+.select(`
+*,
+profiles:user_id(
+full_name,
+email
+),
+gold_packages:package_id(
+name,
+profit
+)
+`)
 .order("created_at",{ascending:false});
+
+
 
 if(error){
 
@@ -91,21 +128,31 @@ return;
 
 }
 
+
 let html = "";
 
-if(!data || data.length===0){
+
+
+if(!data || data.length === 0){
 
 html="<p>No payments found.</p>";
 
 }
 
+
+
 data.forEach(payment=>{
+
 
 let buttons = "";
 
+
+
 if(payment.payment_status === "Pending Approval"){
 
+
 buttons = `
+
 
 <button
 class="approve"
@@ -115,6 +162,7 @@ Approve
 
 </button>
 
+
 <button
 class="reject"
 onclick="rejectPayment('${payment.id}')">
@@ -123,52 +171,128 @@ Reject
 
 </button>
 
+
 `;
+
 
 }else if(payment.payment_status === "Approved"){
 
-buttons = "<h3 style='color:green;'>✅ Approved</h3>";
+
+buttons =
+"<h3 style='color:green;'>✅ Approved</h3>";
+
 
 }else if(payment.payment_status === "Rejected"){
 
-buttons = "<h3 style='color:red;'>❌ Rejected</h3>";
+
+buttons =
+"<h3 style='color:red;'>❌ Rejected</h3>";
+
 
 }
+
+
 
 html += `
 
+
 <div class="payment-card">
 
-<p><strong>User ID:</strong> ${payment.user_id}</p>
 
-<p><strong>Package ID:</strong> ${payment.package_id}</p>
+<h3>👤 ${
+payment.profiles?.full_name || "Unknown User"
+}</h3>
 
-<p><strong>Amount:</strong>
-$${Number(payment.amount).toLocaleString()}</p>
 
-<p><strong>Status:</strong>
-${payment.payment_status}</p>
+<p>
+📧 ${
+payment.profiles?.email || "No email"
+}
+</p>
+
+
+<p>
+🪙 ${
+payment.gold_packages?.name || "Premium Gold Investment Package"
+}
+</p>
+
+
+<p>
+💰 Amount:
+<strong>
+$${Number(payment.amount).toLocaleString()}
+</strong>
+</p>
+
+
+<p>
+📈 Profit:
+<strong>
+$${Number(payment.gold_packages?.profit || 0).toLocaleString()}
+</strong>
+</p>
+
+
+`;
+  ${payment.proof_url ? `
+
+<a href="${payment.proof_url}" target="_blank">
+
+<button class="proof">
+
+📷 View Payment Proof
+
+</button>
+
+</a>
+
+` : ""}
+
+
+
+<p>
+
+<strong>Status:</strong>
+
+${payment.payment_status}
+
+</p>
+
 
 ${buttons}
 
+
 </div>
 
+
 `;
+
 });
+
 
 document.getElementById("paymentsList").innerHTML =
 html;
-}
-  async function approvePayment(id){
 
-// Get payment details
+
+}
+
+
+
+
+
+async function approvePayment(id){
+
+
 
 const { data: payment, error: paymentError } =
 await supabaseClient
 .from("payments")
 .select("*")
-.eq("id", id)
+.eq("id",id)
 .single();
+
+
 
 if(paymentError){
 
@@ -178,14 +302,18 @@ return;
 
 }
 
-// Get selected gold package
+
+
+
 
 const { data: goldPackage, error: packageError } =
 await supabaseClient
 .from("gold_packages")
 .select("*")
-.eq("id", payment.package_id)
+.eq("id",payment.package_id)
 .single();
+
+
 
 if(packageError){
 
@@ -195,7 +323,9 @@ return;
 
 }
 
-// Create purchase
+
+
+
 
 const { data: purchase, error: purchaseError } =
 await supabaseClient
@@ -208,13 +338,17 @@ package_id: payment.package_id,
 
 amount: payment.amount,
 
-payment_status: "Approved",
+payment_status:"Approved",
 
 profit: goldPackage.profit
 
 }])
 .select()
 .single();
+
+
+
+
 
 if(purchaseError){
 
@@ -224,9 +358,12 @@ return;
 
 }
 
-// Update payment
 
-const { error: updateError } =
+
+
+
+
+const { error:updateError } =
 await supabaseClient
 .from("payments")
 .update({
@@ -238,6 +375,10 @@ purchase_id:purchase.id
 })
 .eq("id",id);
 
+
+
+
+
 if(updateError){
 
 alert(updateError.message);
@@ -246,14 +387,15 @@ return;
 
 }
 
-// Send notification
 
-const { error: notificationError } =
+
+
+const { error:notificationError } =
 await supabaseClient
 .from("notifications")
 .insert([{
 
-user_id: payment.user_id,
+user_id:payment.user_id,
 
 title:"Payment Approved",
 
@@ -268,6 +410,10 @@ is_read:false
 
 }]);
 
+
+
+
+
 if(notificationError){
 
 alert(notificationError.message);
@@ -276,19 +422,31 @@ return;
 
 }
 
+
+
+
 alert("Payment approved successfully");
+
 
 loadPayments();
 
+
 }
-  async function rejectPayment(id){
+
+
+
+
+async function rejectPayment(id){
+
 
 const { data: payment, error: paymentError } =
 await supabaseClient
 .from("payments")
 .select("*")
-.eq("id", id)
+.eq("id",id)
 .single();
+
+
 
 if(paymentError){
 
@@ -297,8 +455,7 @@ alert(paymentError.message);
 return;
 
 }
-
-const { error: updateError } =
+const { error:updateError } =
 await supabaseClient
 .from("payments")
 .update({
@@ -308,6 +465,8 @@ payment_status:"Rejected"
 })
 .eq("id",id);
 
+
+
 if(updateError){
 
 alert(updateError.message);
@@ -316,12 +475,15 @@ return;
 
 }
 
-const { error: notificationError } =
+
+
+
+const { error:notificationError } =
 await supabaseClient
 .from("notifications")
 .insert([{
 
-user_id: payment.user_id,
+user_id:payment.user_id,
 
 title:"Payment Rejected",
 
@@ -336,6 +498,8 @@ is_read:false
 
 }]);
 
+
+
 if(notificationError){
 
 alert(notificationError.message);
@@ -344,15 +508,25 @@ return;
 
 }
 
+
+
 alert("Payment rejected successfully");
 
+
 loadPayments();
+
 
 }
 
+
+
+
+
 loadPayments();
 
+
 </script>
+
 
 </body>
 
