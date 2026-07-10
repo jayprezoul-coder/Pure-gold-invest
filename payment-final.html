@@ -413,3 +413,237 @@ window.location.href =
 </body>
 
 </html>
+<script>
+
+
+const SUPABASE_URL = 
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
+
+
+const SUPABASE_KEY = 
+"sb_publishable_p8xWtXed8N8AjaVKhdPhOgQ_Qwk2rAaH";
+
+
+const supabaseClient = supabase.createClient(
+
+SUPABASE_URL,
+
+SUPABASE_KEY
+
+);
+
+
+
+
+const params = new URLSearchParams(window.location.search);
+
+
+const amount = params.get("amount");
+
+const profit = params.get("profit");
+
+
+
+if(amount){
+
+document.getElementById("amount").innerText =
+
+"$" + Number(amount).toLocaleString();
+
+}
+
+
+if(profit){
+
+document.getElementById("profit").innerText =
+
+"$" + Number(profit).toLocaleString();
+
+}
+
+
+
+
+document.getElementById("btcAddress").innerText =
+
+"YOUR BITCOIN WALLET ADDRESS";
+
+
+document.getElementById("btcQR").src =
+
+"YOUR BITCOIN QR CODE IMAGE";
+
+
+
+
+
+document.getElementById("copyWallet")
+
+.addEventListener("click", async ()=>{
+
+
+const wallet = document.getElementById("btcAddress").innerText;
+
+
+await navigator.clipboard.writeText(wallet);
+
+
+alert("Bitcoin wallet address copied.");
+
+
+});
+
+
+
+
+
+document.getElementById("submitPayment")
+
+.addEventListener("click", async ()=>{
+
+
+const { data: { session } } =
+
+await supabaseClient.auth.getSession();
+
+
+
+const user = session?.user;
+
+
+
+if(!user){
+
+alert("Please login first.");
+
+return;
+
+}
+
+
+
+
+const file = document.getElementById("proofFile").files[0];
+
+
+
+if(!file){
+
+alert("Please upload your payment proof.");
+
+return;
+
+}
+
+
+
+
+
+const fileName =
+
+user.id + "_" + Date.now() + "_" + file.name;
+
+
+
+
+
+const { error: uploadError } =
+
+await supabaseClient.storage
+
+.from("payment-receipts")
+
+.upload(fileName, file);
+
+
+
+
+
+if(uploadError){
+
+alert(uploadError.message);
+
+return;
+
+}
+
+
+
+
+
+const { data: urlData } =
+
+supabaseClient.storage
+
+.from("payment-receipts")
+
+.getPublicUrl(fileName);
+
+
+
+const proofUrl = urlData.publicUrl;
+
+
+
+
+
+const { error } =
+
+await supabaseClient
+
+.from("payments")
+
+.insert([{
+
+user_id: user.id,
+
+amount: Number(amount),
+
+payment_method: "Bitcoin",
+
+payment_reference: "BTC Payment",
+
+payment_status: "Pending Approval",
+
+proof_url: proofUrl
+
+}]);
+
+
+
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+
+
+
+alert(
+
+"✅ Payment submitted successfully. Your payment is now under review."
+
+);
+
+
+
+window.location.href = "dashboard-final.html";
+
+
+
+});
+
+
+
+</script>
+
+
+</body>
+
+</html>
