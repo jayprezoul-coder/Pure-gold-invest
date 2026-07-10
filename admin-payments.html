@@ -101,19 +101,11 @@ html="<p>No payments found.</p>";
 
 data.forEach(payment=>{
 
-html += `
+let buttons = "";
 
-<div class="payment-card">
+if(payment.payment_status === "Pending Approval"){
 
-<p><strong>User ID:</strong> ${payment.user_id}</p>
-
-<p><strong>Package ID:</strong> ${payment.package_id}</p>
-
-<p><strong>Amount:</strong>
-$${Number(payment.amount).toLocaleString()}</p>
-
-<p><strong>Status:</strong>
-${payment.payment_status}</p>
+buttons = `
 
 <button
 class="approve"
@@ -131,10 +123,37 @@ Reject
 
 </button>
 
+`;
+
+}else if(payment.payment_status === "Approved"){
+
+buttons = "<h3 style='color:green;'>✅ Approved</h3>";
+
+}else if(payment.payment_status === "Rejected"){
+
+buttons = "<h3 style='color:red;'>❌ Rejected</h3>";
+
+}
+
+html += `
+
+<div class="payment-card">
+
+<p><strong>User ID:</strong> ${payment.user_id}</p>
+
+<p><strong>Package ID:</strong> ${payment.package_id}</p>
+
+<p><strong>Amount:</strong>
+$${Number(payment.amount).toLocaleString()}</p>
+
+<p><strong>Status:</strong>
+${payment.payment_status}</p>
+
+${buttons}
+
 </div>
 
 `;
-
 });
 
 document.getElementById("paymentsList").innerHTML =
