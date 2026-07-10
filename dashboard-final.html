@@ -269,7 +269,7 @@ profile.full_name || "User";
 
 document.getElementById("balance").innerText =
 
-"$" + Number(profile.balance || 0).toLocaleString();
+"$" + Number(profile.available_balance || 0).toLocaleString();
 
 
 
@@ -281,8 +281,7 @@ document.getElementById("profit").innerText =
 
 document.getElementById("withdrawal").innerText =
 
-"$" + Number(profile.total_withdrawal || 0).toLocaleString();
-
+"$" + Number(profile.amount_withdrawn || 0).toLocaleString();
 
 }
 
