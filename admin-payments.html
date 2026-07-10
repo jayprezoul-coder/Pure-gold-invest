@@ -22,42 +22,28 @@ text-align:center;
 }
 
 .payment-card{
-
 background:white;
-padding:20px;
+padding:15px;
 margin-bottom:15px;
 border-radius:10px;
 box-shadow:0 2px 5px rgba(0,0,0,.1);
-
 }
 
 button{
-
 border:none;
 padding:10px 18px;
 border-radius:5px;
 color:white;
 cursor:pointer;
 margin-right:10px;
-
 }
 
 .approve{
-
 background:green;
-
 }
 
 .reject{
-
 background:red;
-
-}
-
-.proof{
-
-background:#333;
-
 }
 
 </style>
@@ -82,18 +68,18 @@ Loading payments...
 <script>
 
 
-const supabaseUrl =
+const SUPABASE_URL =
 "https://jjydxddxxcqxgegkfgnh.supabase.co";
 
 
-const supabaseKey =
+const SUPABASE_KEY =
 "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
 
 const supabaseClient =
 supabase.createClient(
-supabaseUrl,
-supabaseKey
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
 
@@ -103,16 +89,21 @@ async function loadPayments(){
 
 const { data, error } =
 await supabaseClient
-.from("admin_payment_view")
+.from("payments")
 .select("*")
 .order("created_at",{ascending:false});
+
+
+
 if(error){
 
-alert(error.message);
+document.getElementById("paymentsList").innerHTML =
+error.message;
 
 return;
 
 }
+
 
 
 let html = "";
@@ -149,6 +140,7 @@ Approve
 </button>
 
 
+
 <button
 class="reject"
 onclick="rejectPayment('${payment.id}')">
@@ -161,6 +153,7 @@ Reject
 `;
 
 
+
 }else if(payment.payment_status === "Approved"){
 
 
@@ -168,11 +161,13 @@ buttons =
 "<h3 style='color:green;'>✅ Approved</h3>";
 
 
+
 }else if(payment.payment_status === "Rejected"){
 
 
 buttons =
 "<h3 style='color:red;'>❌ Rejected</h3>";
+
 
 
 }
@@ -185,61 +180,28 @@ html += `
 <div class="payment-card">
 
 
-<h3>👤 ${
-payment.profiles?.full_name || "Unknown User"
-}</h3>
+<p><strong>User ID:</strong>
 
+${payment.user_id}
 
-<p>
-📧 ${
-payment.profiles?.email || "No email"
-}
 </p>
 
 
-<p>
-🪙 ${
-payment.gold_packages?.name || "Premium Gold Investment Package"
-}
+<p><strong>Package ID:</strong>
+
+${payment.package_id}
+
 </p>
 
 
-<p>
-💰 Amount:
-<strong>
+<p><strong>Amount:</strong>
+
 $${Number(payment.amount).toLocaleString()}
-</strong>
+
 </p>
 
 
-<p>
-📈 Profit:
-<strong>
-$${Number(payment.gold_packages?.profit || 0).toLocaleString()}
-</strong>
-</p>
-
-
-`;
-  ${payment.proof_url ? `
-
-<a href="${payment.proof_url}" target="_blank">
-
-<button class="proof">
-
-📷 View Payment Proof
-
-</button>
-
-</a>
-
-` : ""}
-
-
-
-<p>
-
-<strong>Status:</strong>
+<p><strong>Status:</strong>
 
 ${payment.payment_status}
 
@@ -254,20 +216,19 @@ ${buttons}
 
 `;
 
+
+
 });
+
 
 
 document.getElementById("paymentsList").innerHTML =
 html;
 
 
+
 }
-
-
-
-
-
-async function approvePayment(id){
+  async function approvePayment(id){
 
 
 
@@ -348,7 +309,6 @@ return;
 
 
 
-
 const { error:updateError } =
 await supabaseClient
 .from("payments")
@@ -372,6 +332,7 @@ alert(updateError.message);
 return;
 
 }
+
 
 
 
@@ -411,6 +372,7 @@ return;
 
 
 
+
 alert("Payment approved successfully");
 
 
@@ -422,7 +384,10 @@ loadPayments();
 
 
 
+
+
 async function rejectPayment(id){
+
 
 
 const { data: payment, error: paymentError } =
@@ -441,6 +406,10 @@ alert(paymentError.message);
 return;
 
 }
+
+
+
+
 const { error:updateError } =
 await supabaseClient
 .from("payments")
@@ -460,11 +429,7 @@ alert(updateError.message);
 return;
 
 }
-
-
-
-
-const { error:notificationError } =
+  const { error:notificationError } =
 await supabaseClient
 .from("notifications")
 .insert([{
@@ -509,6 +474,7 @@ loadPayments();
 
 
 loadPayments();
+
 
 
 </script>
