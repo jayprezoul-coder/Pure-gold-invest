@@ -302,6 +302,58 @@ await supabaseClient
 
 document.getElementById("pendingPayments").innerText =
 payments || 0;
+  const { count: approved } =
+await supabaseClient
+.from("payments")
+.select("*", { count:"exact", head:true })
+.eq("payment_status", "Approved");
+
+document.getElementById("approvedPayments").innerText =
+approved || 0;
+
+
+
+const { count: rejected } =
+await supabaseClient
+.from("payments")
+.select("*", { count:"exact", head:true })
+.eq("payment_status", "Rejected");
+
+document.getElementById("rejectedPayments").innerText =
+rejected || 0;
+
+
+
+const { data: investments } =
+await supabaseClient
+.from("purchases")
+.select("amount, profit");
+
+
+
+let totalInvestment = 0;
+let totalProfit = 0;
+
+
+if(investments){
+
+investments.forEach(item=>{
+
+totalInvestment += Number(item.amount || 0);
+
+totalProfit += Number(item.profit || 0);
+
+});
+
+}
+
+
+document.getElementById("totalInvestment").innerText =
+"$" + totalInvestment.toLocaleString();
+
+
+document.getElementById("totalProfit").innerText =
+"$" + totalProfit.toLocaleString();
 
 const { count: withdrawals } =
 await supabaseClient
