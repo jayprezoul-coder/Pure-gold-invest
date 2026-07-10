@@ -30,8 +30,11 @@
 <h2>👑 Administrator Control Panel</h2>
 
 <p>
+
 Welcome to the Pure Gold Invest Admin Dashboard.
+
 Use the options below to manage your investment platform.
+
 </p>
 
 </div>
@@ -43,29 +46,41 @@ Use the options below to manage your investment platform.
 <h2>📊 Dashboard Overview</h2>
 
 <div class="card">
+
 <h3>👥 Total Users</h3>
+
 <h2 id="totalUsers">0</h2>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <h3>🪙 Gold Packages</h3>
+
 <h2 id="totalPackages">0</h2>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <h3>💵 Pending Payments</h3>
+
 <h2 id="pendingPayments">0</h2>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <h3>🏦 Withdrawal Requests</h3>
+
 <h2 id="withdrawRequests">0</h2>
+
 </div>
 
 </section>
@@ -73,66 +88,99 @@ Use the options below to manage your investment platform.
 <section>
 
 <h2>⚙️ Management</h2>
+
 <div class="card">
+
 <a href="admin-users.html">
+
 <button>👥 Manage Users</button>
+
 </a>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <a href="admin-packages.html">
+
 <button>🪙 Manage Gold Packages</button>
+
 </a>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <a href="admin-payments.html">
+
 <button>💵 Manage Payments</button>
+
 </a>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <a href="admin-settings.html">
+
 <button>💳 Bitcoin Settings</button>
+
 </a>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <a href="admin-withdrawals.html">
+
 <button>🏦 Withdrawal Requests</button>
+
 </a>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <a href="admin-notifications.html">
+
 <button>🔔 Notifications</button>
+
 </a>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <a href="dashboard-final.html">
+
 <button>👤 View User Dashboard</button>
+
 </a>
+
 </div>
 
 <br>
 
 <div class="card">
+
 <button onclick="logout()">
+
 🚪 Logout
+
 </button>
+
 </div>
 
 </section>
@@ -142,37 +190,45 @@ Use the options below to manage your investment platform.
 <p>© 2026 Pure Gold Invest. All rights reserved.</p>
 
 </footer>
-
 <script>
 
-const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+const SUPABASE_URL =
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+const SUPABASE_KEY =
+"sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
 const supabaseClient = supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
 
-async function loadDashboard() {
+async function loadDashboard(){
 
-const { data: { user } } =
-await supabaseClient.auth.getUser();
+const { data:{ session } } =
+await supabaseClient.auth.getSession();
 
-if (!user) {
+if(!session){
+
 window.location.href = "login-final.html";
+
 return;
+
 }
+
+const user = session.user;
 
 document.getElementById("welcome").innerText =
 "Welcome Admin, " + user.email;
-  const { data: profile } = await supabaseClient
+
+const { data: profile, error: profileError } =
+await supabaseClient
 .from("profiles")
 .select("role")
 .eq("id", user.id)
 .single();
 
-if (!profile || profile.role !== "admin") {
+if(profileError || !profile || profile.role !== "admin"){
 
 alert("Access denied.");
 
@@ -182,38 +238,41 @@ return;
 
 }
 
-const { count: users } = await supabaseClient
+const { count: users } =
+await supabaseClient
 .from("profiles")
-.select("*", { count: "exact", head: true });
+.select("*", { count:"exact", head:true });
 
 document.getElementById("totalUsers").innerText =
 users || 0;
 
-const { count: packages } = await supabaseClient
+const { count: packages } =
+await supabaseClient
 .from("gold_packages")
-.select("*", { count: "exact", head: true });
+.select("*", { count:"exact", head:true });
 
 document.getElementById("totalPackages").innerText =
 packages || 0;
 
-const { count: payments } = await supabaseClient
-.from("purchases")
-.select("*", { count: "exact", head: true })
-.eq("payment_status", "Pending");
+const { count: payments } =
+await supabaseClient
+.from("payments")
+.select("*", { count:"exact", head:true })
+.eq("payment_status", "Pending Approval");
 
 document.getElementById("pendingPayments").innerText =
 payments || 0;
 
-const { count: withdrawals } = await supabaseClient
+const { count: withdrawals } =
+await supabaseClient
 .from("withdrawals")
-.select("*", { count: "exact", head: true });
+.select("*", { count:"exact", head:true });
 
 document.getElementById("withdrawRequests").innerText =
 withdrawals || 0;
 
 }
-
-async function logout() {
+  async function logout(){
 
 await supabaseClient.auth.signOut();
 
