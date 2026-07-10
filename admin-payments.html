@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pure Gold Invest - Admin Payments</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<h1>🪙 Pure Gold Invest</h1>
+
+<p>Admin Payment Review</p>
+
+</header>
+
+
+
+<section>
+
+
+<h2>💳 Payment Requests</h2>
+
+
+<div id="payments">
+
+<p>Loading payments...</p>
+
+</div>
+
+
+</section>
+
+
+
+<section>
+
+
+<a href="admin-dashboard.html">
+
+<button type="button">
+
+Back to Admin Dashboard
+
+</button>
+
+</a>
+
+
+</section>
+<script>
+
+
+const SUPABASE_URL =
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
+
+
+const SUPABASE_KEY =
+"sb_publishable_p8xWtXed8N8AjaVKhdPhOgQ_Qwk2rAaH";
+
+
+const supabaseClient = supabase.createClient(
+
+SUPABASE_URL,
+
+SUPABASE_KEY
+
+);
+
+
+
+
+
+async function loadPayments(){
+
+
+const { data:{ user } } =
+
+await supabaseClient.auth.getUser();
+
+
+
+if(!user){
+
+window.location.href = "login-final.html";
+
+return;
+
+}
+
+
+
+
+
+const { data: profile, error: profileError } =
+
+await supabaseClient
+
+.from("profiles")
+
+.select("role")
+
+.eq("id", user.id)
+
+.single();
+
+
+
+
+
+if(profileError || !profile || profile.role !== "admin"){
+
+
+alert("Access denied");
+
+
+window.location.href = "dashboard-final.html";
+
+
+return;
+
+
+}
+
+
+
+
+
+
+const { data: payments, error } =
+
+await supabaseClient
+
+.from("payments")
+
+.select("*")
+
+.order("created_at", { ascending:false });
+
+
+
+
+
+const box = document.getElementById("payments");
+
+
+
+
+
+if(error){
+
+
+box.innerHTML =
+
+"<p>" + error.message + "</p>";
+
+
+return;
+
+
+}
+
+
+
+
+
+if(!payments || payments.length === 0){
+
+
+box.innerHTML =
+
+"<p>No payment requests found.</p>";
+
+
+return;
+
+
+}
+
+
+
+
+
+
+box.innerHTML = "";
+
+
+
+
+
+payments.forEach(payment => {
+
+
+box.innerHTML += `
+
+
+<div class="card">
+
+
+<h3>🧾 Payment Request</h3>
+
+
+<p>
+
+<strong>Amount:</strong>
+
+$${Number(payment.amount).toLocaleString()}
+
+</p>
+
+
+
+<p>
+
+<strong>Payment Method:</strong>
+
+${payment.payment_method}
+
+</p>
+
+
+
+
+<p>
+
+<strong>Status:</strong>
+
+${payment.payment_status}
+
+</p>
+
+
+
+<p>
+
+<strong>Date:</strong>
+
+${new Date(payment.created_at).toLocaleString()}
+
+</p>
+
+
+
+
+<img
+
+src="${payment.proof_url}"
+
+width="250"
+
+>
+
+
+
+<br><br>
+
+
+<button onclick="approvePayment('${payment.id}')">
+
+✅ Approve Payment
+
+</button>
+
+
+
+<button onclick="rejectPayment('${payment.id}')">
+
+❌ Reject Payment
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+});
+
+
+}
+
+
+
+
+
+loadPayments();
+  async function approvePayment(id){
+
+
+const { error } = await supabaseClient
+
+.from("payments")
+
+.update({
+
+payment_status: "Approved"
+
+})
+
+.eq("id", id);
+
+
+
+
+if(error){
+
+
+alert(error.message);
+
+
+return;
+
+
+}
+
+
+
+
+alert("✅ Payment approved successfully.");
+
+
+loadPayments();
+
+
+}
+
+
+
+
+
+async function rejectPayment(id){
+
+
+const reason = prompt(
+
+"Enter reason for rejecting this payment:"
+
+);
+
+
+
+const { error } = await supabaseClient
+
+.from("payments")
+
+.update({
+
+payment_status: "Rejected",
+
+admin_note: reason || "Payment rejected"
+
+})
+
+.eq("id", id);
+
+
+
+
+
+if(error){
+
+
+alert(error.message);
+
+
+return;
+
+
+}
+
+
+
+
+alert("❌ Payment rejected.");
+
+
+loadPayments();
+
+
+}
+
+
+
+</script>
+
+
+
+</body>
+
+</html>
