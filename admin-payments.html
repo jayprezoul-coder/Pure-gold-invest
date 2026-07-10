@@ -79,9 +79,17 @@ async function loadPayments(){
 
 const {data,error}=await supabaseClient
 .from("payments")
-.select("*")
-.order("created_at",{ascending:false});
+.select("*");
 
+
+if(error){
+
+document.getElementById("paymentsList").innerHTML =
+error.message;
+
+return;
+
+}
 
 
 if(error){
