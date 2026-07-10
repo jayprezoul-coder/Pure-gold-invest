@@ -1,102 +1,193 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pure Gold Invest - Create Account</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pure Gold Invest - Create Account</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
 
 <body>
 
 <header>
-  <h1>🪙 Pure Gold Invest</h1>
-  <p>Create your investment account</p>
+<h1>🪙 Pure Gold Invest</h1>
+<p>Create your investment account</p>
 </header>
+
 
 <section>
 
 <h2>Create Account</h2>
 
+
 <form id="signupForm">
 
 <input id="fullName" type="text" placeholder="Full Name" required>
+
 <br><br>
 
 <input id="email" type="email" placeholder="Email Address" required>
+
 <br><br>
 
 <input id="username" type="text" placeholder="Username" required>
+
 <br><br>
 
 <input id="password" type="password" placeholder="Create Password" required>
+
 <br><br>
 
-<button type="submit">Create Account</button>
+<button type="submit">
+Create Account
+</button>
 
 </form>
 
+
 <p id="message"></p>
 
-<br>
-
-<a href="index-new.html">
-<button type="button">Back Home</button>
-</a>
 
 </section>
 
-<script>
-const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
-const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+
+<script>
+
+
+const SUPABASE_URL =
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
+
+
+const SUPABASE_KEY =
+"sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+
+
+const supabaseClient =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
-const signupForm = document.getElementById("signupForm");
-const message = document.getElementById("message");
 
-signupForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
 
-  const fullName = document.getElementById("fullName").value;
-  const email = document.getElementById("email").value;
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+document
+.getElementById("signupForm")
+.addEventListener("submit", async (e)=>{
 
-  message.innerText = "Creating account...";
 
-  const { error } = await supabaseClient.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-        username: username
-      }
-    }
-  });
+e.preventDefault();
 
-  if (error) {
-    message.innerText = error.message;
-    return;
-  }
 
-  const { error: loginError } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
 
-  if (loginError) {
-    message.innerText = "Account created, but automatic login failed. Please log in.";
-    return;
-  }
+const fullName =
+document.getElementById("fullName").value;
 
-  window.location.href = "dashboard-final.html";
+
+const email =
+document.getElementById("email").value;
+
+
+const username =
+document.getElementById("username").value;
+
+
+const password =
+document.getElementById("password").value;
+
+
+
+const message =
+document.getElementById("message");
+
+
+
+message.innerText =
+"Creating account...";
+
+
+
+const { data, error } =
+
+await supabaseClient.auth.signUp({
+
+email,
+
+password,
+
 });
+
+
+
+if(error){
+
+message.innerText =
+error.message;
+
+return;
+
+}
+
+
+
+const user =
+data.user;
+
+
+
+const { error: profileError } =
+
+await supabaseClient
+
+.from("profiles")
+
+.insert({
+
+id: user.id,
+
+full_name: fullName,
+
+email: email,
+
+role: "user",
+
+available_balance: 0,
+
+total_profit: 0,
+
+amount_withdrawn: 0
+
+});
+
+
+
+if(profileError){
+
+message.innerText =
+profileError.message;
+
+return;
+
+}
+
+
+
+message.innerText =
+"Account created successfully!";
+
+
+window.location.href =
+"login-final.html";
+
+
+});
+
+
 </script>
+
 
 </body>
 </html>
