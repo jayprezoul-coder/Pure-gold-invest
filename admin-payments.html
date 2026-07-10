@@ -13,9 +13,7 @@
 
 </head>
 
-
 <body>
-
 
 <header>
 
@@ -25,73 +23,52 @@
 
 </header>
 
-
-
 <section>
-
 
 <h2>💳 Payment Requests</h2>
 
-
 <div id="payments">
 
-<p>Loading payments...</p>
+<p>Loading payment requests...</p>
 
 </div>
 
-
 </section>
 
-
-
 <section>
-
 
 <a href="admin-dashboard.html">
 
 <button type="button">
 
-Back to Admin Dashboard
+⬅ Back to Admin Dashboard
 
 </button>
 
 </a>
 
-
 </section>
-<script>
 
+<script>
 
 const SUPABASE_URL =
 "https://jjydxddxxcqxgegkfgnh.supabase.co";
 
-
 const SUPABASE_KEY =
-"sb_publishable_p8xWtXed8N8AjaVKhdPhOgQ_Qwk2rAaH";
+"sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
 
-
-const supabaseClient = supabase.createClient(
-
+const supabaseClient =
+supabase.createClient(
 SUPABASE_URL,
-
 SUPABASE_KEY
-
 );
-
-
-
-
 
 async function loadPayments(){
 
+const { data:{ session } } =
+await supabaseClient.auth.getSession();
 
-const { data:{ user } } =
-
-await supabaseClient.auth.getUser();
-
-
-
-if(!user){
+if(!session){
 
 window.location.href = "login-final.html";
 
@@ -99,305 +76,167 @@ return;
 
 }
 
-
-
-
+const user = session.user;
 
 const { data: profile, error: profileError } =
-
 await supabaseClient
-
 .from("profiles")
-
 .select("role")
-
 .eq("id", user.id)
-
 .single();
 
+if(profileError){
 
+alert(profileError.message);
 
+return;
 
+}
 
-if(profileError || !profile || profile.role !== "admin"){
+if(profile.role !== "admin"){
 
-
-alert("Access denied");
-
+alert("Access denied.");
 
 window.location.href = "dashboard-final.html";
 
-
 return;
-
 
 }
 
-
-
-
-
-
 const { data: payments, error } =
-
 await supabaseClient
-
 .from("payments")
-
 .select("*")
+.order("created_at",{ascending:false});
 
-.order("created_at", { ascending:false });
-
-
-
-
-
-const box = document.getElementById("payments");
-
-
-
-
+const box =
+document.getElementById("payments");
 
 if(error){
 
-
 box.innerHTML =
-
-"<p>" + error.message + "</p>";
-
+"<p>"+error.message+"</p>";
 
 return;
 
-
 }
 
-
-
-
-
-if(!payments || payments.length === 0){
-
+if(!payments || payments.length===0){
 
 box.innerHTML =
-
 "<p>No payment requests found.</p>";
 
-
 return;
-
 
 }
 
-
-
-
-
-
-box.innerHTML = "";
-
-
-
-
-
-payments.forEach(payment => {
-
+box.innerHTML="";
+  payments.forEach(payment=>{
 
 box.innerHTML += `
 
-
 <div class="card">
-
 
 <h3>🧾 Payment Request</h3>
 
+<p><strong>Amount:</strong>
+$${Number(payment.amount).toLocaleString()}</p>
 
-<p>
+<p><strong>Payment Method:</strong>
+${payment.payment_method}</p>
 
-<strong>Amount:</strong>
+<p><strong>Status:</strong>
+${payment.payment_status}</p>
 
-$${Number(payment.amount).toLocaleString()}
-
-</p>
-
-
-
-<p>
-
-<strong>Payment Method:</strong>
-
-${payment.payment_method}
-
-</p>
-
-
-
-
-<p>
-
-<strong>Status:</strong>
-
-${payment.payment_status}
-
-</p>
-
-
-
-<p>
-
-<strong>Date:</strong>
-
-${new Date(payment.created_at).toLocaleString()}
-
-</p>
-
-
-
+<p><strong>Date:</strong>
+${new Date(payment.created_at).toLocaleString()}</p>
 
 <img
-
 src="${payment.proof_url}"
-
 width="250"
-
->
-
-
+style="max-width:100%;border-radius:8px;">
 
 <br><br>
 
-
 <button onclick="approvePayment('${payment.id}')">
-
 ✅ Approve Payment
-
 </button>
 
-
+&nbsp;
 
 <button onclick="rejectPayment('${payment.id}')">
-
 ❌ Reject Payment
-
 </button>
-
-
 
 </div>
 
+<br>
 
 `;
 
-
 });
-
 
 }
 
+async function approvePayment(id){
 
-
-
-
-loadPayments();
-  async function approvePayment(id){
-
-
-const { error } = await supabaseClient
-
+const { error } =
+await supabaseClient
 .from("payments")
-
 .update({
 
-payment_status: "Approved"
+payment_status:"Approved"
 
 })
-
-.eq("id", id);
-
-
-
+.eq("id",id);
 
 if(error){
 
-
 alert(error.message);
-
 
 return;
 
-
 }
-
-
-
 
 alert("✅ Payment approved successfully.");
 
-
 loadPayments();
 
-
 }
-
-
-
-
 
 async function rejectPayment(id){
 
+const reason =
+prompt("Reason for rejection:");
 
-const reason = prompt(
-
-"Enter reason for rejecting this payment:"
-
-);
-
-
-
-const { error } = await supabaseClient
-
+const { error } =
+await supabaseClient
 .from("payments")
-
 .update({
 
-payment_status: "Rejected",
+payment_status:"Rejected",
 
-admin_note: reason || "Payment rejected"
+admin_note: reason || "Rejected by admin"
 
 })
-
-.eq("id", id);
-
-
-
-
+.eq("id",id);
 
 if(error){
 
-
 alert(error.message);
-
 
 return;
 
-
 }
-
-
-
 
 alert("❌ Payment rejected.");
 
-
 loadPayments();
 
-
 }
-
-
+  loadPayments();
 
 </script>
-
-
 
 </body>
 
