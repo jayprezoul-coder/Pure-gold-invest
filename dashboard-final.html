@@ -3,143 +3,177 @@
 
 <head>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-<title>Pure Gold Invest - Dashboard</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
+<title>
+Pure Gold Invest - Dashboard
+</title>
+
+<link rel="stylesheet"
+href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 </head>
 
-
 <body>
-
 
 <header>
 
-<h1>🪙 Pure Gold Invest</h1>
+<h1>
+🪙 Pure Gold Invest
+</h1>
 
-<p id="welcome">Welcome</p>
+<p id="welcome">
+Loading...
+</p>
 
 </header>
 
-
-
-
 <section class="summary">
 
-
 <div class="card">
 
-<h3>💰 Available Balance</h3>
+<h3>
+💰 Available Balance
+</h3>
 
-<h2 id="balance">$0</h2>
+<h2 id="balance">
+$0
+</h2>
 
 </div>
 
-
-
 <div class="card">
 
-<h3>📈 Total Profit</h3>
+<h3>
+📈 Total Profit
+</h3>
 
-<h2 id="profit">$0</h2>
+<h2 id="profit">
+$0
+</h2>
 
 </div>
 
-
-
 <div class="card">
 
-<h3>🏦 Total Withdrawal</h3>
+<h3>
+🏦 Amount Withdrawn
+</h3>
 
-<h2 id="withdrawal">$0</h2>
+<h2 id="withdrawal">
+$0
+</h2>
 
 </div>
-
 
 </section>
 
-
-
-
 <section>
 
-<h2>👤 My Profile</h2>
-
+<h2>
+👤 My Profile
+</h2>
 
 <p>
+
 <strong>Name:</strong>
-<span id="fullname">Loading...</span>
+
+<span id="fullname">
+Loading...
+</span>
+
 </p>
 
-
 <p>
+
 <strong>Email:</strong>
-<span id="email">Loading...</span>
-</p>
 
+<span id="email">
+Loading...
+</span>
+
+</p>
 
 <p>
-<strong>Account Status:</strong>
-✅ Verified
+
+<strong>Phone:</strong>
+
+<span id="phone">
+-
+</span>
+
 </p>
 
+<p>
+
+<strong>Account Status:</strong>
+
+<span id="status">
+✅ Verified
+</span>
+
+</p>
 
 </section>
 
-
-
-
-
 <section>
 
-<h2>🪙 Available Gold Investment Packages</h2>
-
+<h2>
+🪙 Available Gold Packages
+</h2>
 
 <div id="packages">
 
-<p>Loading packages...</p>
+<p>
+Loading packages...
+</p>
 
 </div>
 
-
 </section>
+
 <section>
 
-<h2>📂 My Investments</h2>
+<h2>
+📂 My Investments
+</h2>
 
 <div id="investments">
 
-<p>Loading investments...</p>
+<p>
+Loading investments...
+</p>
 
 </div>
 
 </section>
 
-
-
-
 <section>
 
-<h2>🔔 Notifications</h2>
+<h2>
+🔔 Notifications
+</h2>
 
 <div id="notifications">
 
-<p>Loading notifications...</p>
+<p>
+Loading notifications...
+</p>
 
 </div>
 
 </section>
 
-
-
-
 <section>
 
-<h2>🚚 Delivery Center</h2>
+<h2>
+🚚 Delivery Center
+</h2>
 
 <p id="delivery">
 
@@ -149,12 +183,11 @@ No delivery information available yet.
 
 </section>
 
-
-
-
 <section>
 
-<h2>💬 Contact Admin</h2>
+<h2>
+💬 Contact Admin
+</h2>
 
 <button>
 
@@ -163,9 +196,6 @@ Message Admin
 </button>
 
 </section>
-
-
-
 
 <section>
 
@@ -177,32 +207,27 @@ Logout
 
 </section>
 
-
-
-
 <footer>
 
 <p>
 
-© 2026 Pure Gold Invest. All rights reserved.
+© 2026 Pure Gold Invest.
+All Rights Reserved.
 
 </p>
 
 </footer>
 
-
-
-
 <script>
 
+const SUPABASE_URL =
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
 
-const SUPABASE_URL = "https://jjydxddxxcqxgegkfgnh.supabase.co";
+const SUPABASE_KEY =
+"YOUR_SUPABASE_PUBLISHABLE_KEY";
 
-
-const SUPABASE_KEY = "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
-
-
-const supabaseClient = supabase.createClient(
+const supabaseClient =
+supabase.createClient(
 
 SUPABASE_URL,
 
@@ -210,376 +235,298 @@ SUPABASE_KEY
 
 );
 
-
-
-
 async function loadDashboard(){
 
-
-const { data:{ user } } =
-
+const {
+data:{ user }
+}
+=
 await supabaseClient.auth.getUser();
-
-
 
 if(!user){
 
-window.location.href = "login-final.html";
+window.location.href =
+"login-final.html";
 
 return;
 
 }
-
-
-
-document.getElementById("welcome").innerText =
-
-"Welcome, " + user.email;
-
-
-
-document.getElementById("email").innerText =
-
+  document.getElementById("email").innerText =
 user.email;
 
-
-
-
-
-const { data: profile } = await supabaseClient
-
+const { data: profile } =
+await supabaseClient
 .from("profiles")
-
 .select("*")
-
 .eq("id", user.id)
-
 .single();
-
-
-
 
 if(profile){
 
+document.getElementById("welcome").innerText =
+"Welcome, " + (profile.full_name || "User");
 
 document.getElementById("fullname").innerText =
-
 profile.full_name || "User";
 
+document.getElementById("phone").innerText =
+profile.phone || "-";
 
 document.getElementById("balance").innerText =
-
-"$" + Number(profile.balance || 0).toLocaleString();
-
-
+"$" + Number(profile.available_balance || 0).toLocaleString();
 
 document.getElementById("profit").innerText =
-
 "$" + Number(profile.total_profit || 0).toLocaleString();
 
-
-
 document.getElementById("withdrawal").innerText =
-
-"$" + Number(profile.total_withdrawal || 0).toLocaleString();
-
+"$" + Number(profile.amount_withdrawn || 0).toLocaleString();
 
 }
 
-
-
-
-const { data: packages } = await supabaseClient
-
+const { data: packages } =
+await supabaseClient
 .from("gold_packages")
-
 .select("*")
+.order("price",{ascending:true});
 
-.order("price", { ascending:true });
-
-
-
-const packageBox = document.getElementById("packages");
-
+const packageBox =
+document.getElementById("packages");
 
 packageBox.innerHTML = "";
 
-
-
-if(!packages || packages.length === 0){
-
+if(!packages || packages.length===0){
 
 packageBox.innerHTML =
+"<p>No investment packages available.</p>";
 
-"<p>No packages available.</p>";
+}else{
 
-
-return;
-
-
-}
-
-
-
-packages.forEach(item => {
-
-
+packages.forEach(item=>{
 
 packageBox.innerHTML += `
 
-
 <div class="card">
 
+<h3>
+🪙 ${item.name}
+</h3>
 
-<h3>🪙 ${item.name}</h3>
-
-
-<p>${item.description || ""}</p>
-
-
-<p><strong>Amount to Invest</strong></p>
-
-
-<h2>💵 $${Number(item.price).toLocaleString()}</h2>
-
-
-
-<p><strong>Profit Gained</strong></p>
-
-
-<h2>📈 $${Number(item.profit).toLocaleString()}</h2>
-
-
+<p>
+${item.description || ""}
+</p>
 
 <p>
 
+<strong>Investment</strong>
+
+</p>
+
+<h2>
+
+💵 $${Number(item.price).toLocaleString()}
+
+</h2>
+
+<p>
+
+<strong>Expected Profit</strong>
+
+</p>
+
+<h2>
+
+📈 $${Number(item.profit).toLocaleString()}
+
+</h2>
+
+<p>
+
+Status:
 🟢 ${item.status}
 
 </p>
 
-
-
 <a href="payment-final.html?amount=${item.price}&profit=${item.profit}">
-
 
 <button>
 
-Select Package
+Choose Package
 
 </button>
 
-
 </a>
-
-
 
 </div>
 
-
 `;
-
-
 
 });
 
+}
 
 }
   async function loadInvestments(){
 
-
 const { data:{ user } } =
-
 await supabaseClient.auth.getUser();
 
-
-
-const { data } = await supabaseClient
-
+const { data } =
+await supabaseClient
 .from("purchases")
-
 .select("*")
-
 .eq("user_id", user.id)
+.order("created_at",{ascending:false});
 
-.order("created_at", { ascending:false });
+const box =
+document.getElementById("investments");
 
-
-
-const box = document.getElementById("investments");
-
-
-
-if(!data || data.length === 0){
-
+if(!data || data.length===0){
 
 box.innerHTML =
 
 "<p>You haven't purchased any gold packages yet.</p>";
 
-
 return;
 
-
 }
-
-
 
 box.innerHTML = "";
 
-
-
-data.forEach(item => {
-
+data.forEach(item=>{
 
 box.innerHTML += `
 
-
 <div class="card">
 
+<h3>
 
-<h3>🪙 Gold Investment</h3>
+🪙 Gold Investment
 
-
-<p>
-
-Amount: $${Number(item.amount).toLocaleString()}
-
-</p>
-
+</h3>
 
 <p>
 
-Profit: $${Number(item.profit || 0).toLocaleString()}
+Amount:
+$${Number(item.amount).toLocaleString()}
 
 </p>
-
 
 <p>
 
-Status: ${item.payment_status}
+Expected Profit:
+$${Number(item.profit || 0).toLocaleString()}
 
 </p>
 
+<p>
+
+Payment Status:
+
+${item.payment_status}
+
+</p>
+
+<p>
+
+Purchase Date:
+
+${new Date(item.created_at).toLocaleDateString()}
+
+</p>
 
 </div>
 
-
 `;
-
 
 });
 
-
 }
-
-
-
-
 
 
 
 async function loadNotifications(){
 
-
-
 const { data:{ user } } =
-
 await supabaseClient.auth.getUser();
 
-
-
-const { data } = await supabaseClient
-
+const { data } =
+await supabaseClient
 .from("notifications")
-
 .select("*")
-
 .eq("user_id", user.id)
+.order("created_at",{ascending:false});
 
-.order("created_at", { ascending:false });
+const box =
+document.getElementById("notifications");
 
-
-
-
-const box = document.getElementById("notifications");
-
-
-
-if(!data || data.length === 0){
-
+if(!data || data.length===0){
 
 box.innerHTML =
 
-"<p>No new notifications.</p>";
-
+"<p>No notifications available.</p>";
 
 return;
 
-
 }
-
-
 
 box.innerHTML = "";
 
-
-
-data.forEach(note => {
-
+data.forEach(note=>{
 
 box.innerHTML += `
 
-
 <div class="card">
 
+<h3>
 
-<h3>${note.title}</h3>
+${note.title}
 
+</h3>
 
-<p>${note.message}</p>
+<p>
 
+${note.message}
+
+</p>
 
 </div>
 
-
 `;
-
 
 });
 
-
 }
-
-
-
-
-
-
-async function logout(){
-
+  async function logout(){
 
 await supabaseClient.auth.signOut();
 
-
 window.location.href = "login-final.html";
-
 
 }
 
 
 
+window.addEventListener("load", async ()=>{
 
+try{
 
-loadDashboard();
+await loadDashboard();
 
-loadInvestments();
+await loadInvestments();
 
-loadNotifications();
+await loadNotifications();
 
+}catch(error){
 
+console.error(error);
+
+alert("Unable to load your dashboard. Please refresh the page.");
+
+}
+
+});
 
 </script>
-
 
 </body>
 
