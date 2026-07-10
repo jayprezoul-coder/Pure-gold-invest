@@ -186,7 +186,8 @@ const params = new URLSearchParams(window.location.search);
 const amount = params.get("amount");
 
 const profit = params.get("profit");
-
+  
+const packageId = params.get("package_id");
 
 
 
@@ -360,6 +361,8 @@ await supabaseClient
 
 
 user_id: user.id,
+
+package_id: packageId,
 
 
 amount: Number(amount),
