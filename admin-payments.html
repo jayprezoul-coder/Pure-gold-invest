@@ -104,19 +104,8 @@ async function loadPayments(){
 const { data, error } =
 await supabaseClient
 .from("payments")
-.select(`
-*,
-profiles:user_id(
-full_name,
-email
-),
-gold_packages:package_id(
-name,
-profit
-)
-`)
+.select("*")
 .order("created_at",{ascending:false});
-
 
 
 if(error){
