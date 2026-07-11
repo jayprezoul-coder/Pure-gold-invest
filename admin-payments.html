@@ -187,9 +187,14 @@ ${payment.user_id}
 </p>
 
 
-<p><strong>Package ID:</strong>
+<p><strong>User ID:</strong>
 
-${payment.package_id}
+${payment.user_id}
+
+</p>
+
+<p id="customer-${payment.id}">
+Loading customer...
 
 </p>
 
@@ -222,10 +227,29 @@ ${buttons}
 
 
 
-document.getElementById("paymentsList").innerHTML =
-html;
+data.forEach(async(payment)=>{
+
+const { data: profile } =
+await supabaseClient
+.from("profiles")
+.select("full_name,email")
+.eq("id",payment.user_id)
+.single();
 
 
+const customerBox =
+document.getElementById("customer-" + payment.id);
+
+
+if(profile && customerBox){
+
+customerBox.innerHTML =
+"👤 " + profile.full_name +
+"<br>📧 " + profile.email;
+
+}
+
+});
 
 }
   async function approvePayment(id){
