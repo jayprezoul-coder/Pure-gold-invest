@@ -229,7 +229,7 @@ html;
 
 }
   async function approvePayment(id){
-    alert("Approve button clicked");
+    alert("Step 1: Approve started");
 
 
 
@@ -239,6 +239,7 @@ await supabaseClient
 .select("*")
 .eq("id",id)
 .single();
+    alert("Step 2: Payment loaded");
 
 
 
