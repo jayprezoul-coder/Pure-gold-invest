@@ -305,19 +305,29 @@ await supabaseClient
 
 user_id: payment.user_id,
 
-payment_id: payment.id,
-
 package_id: payment.package_id,
 
 amount: payment.amount,
 
 payment_status:"Approved",
 
-profit: goldPackage.profit
+profit: goldPackage.profit,
+
+payment_id: payment.id
 
 }])
-.select()
-.single();
+.select();
+
+
+if(purchaseError){
+
+alert("Purchase Error: " + purchaseError.message);
+
+return;
+
+}
+
+alert("Purchase created successfully");
   
     alert("Step 4: Purchase created");
 
