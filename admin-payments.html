@@ -354,7 +354,9 @@ return;
 alert("Payment approved successfully");
 
 
-loadPayments();
+loadPayments().catch(error => {
+alert(error.message);
+});
 
 
 }
