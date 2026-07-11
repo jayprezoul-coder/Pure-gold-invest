@@ -269,12 +269,11 @@ alert(packageError.message);
 return;
 
 }
-    const { data: existingPurchase, error: existingPurchaseError } =
+    const { count, error: existingPurchaseError } =
 await supabaseClient
 .from("purchases")
-.select("id")
-.eq("payment_id", payment.id)
-.maybeSingle();
+.select("*", { count: "exact", head: true })
+.eq("payment_id", payment.id);
 
 if(existingPurchaseError){
 
@@ -284,7 +283,7 @@ return;
 
 }
 
-if(existingPurchase){
+if(count > 0){
 
 alert("This payment has already been approved.");
 
