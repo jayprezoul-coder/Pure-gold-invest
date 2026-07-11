@@ -124,12 +124,9 @@ data.forEach(payment=>{
 let buttons = "";
 
 
-
 if(payment.payment_status === "Pending Approval"){
 
-
 buttons = `
-
 
 <button
 class="approve"
@@ -140,7 +137,6 @@ Approve
 </button>
 
 
-
 <button
 class="reject"
 onclick="rejectPayment('${payment.id}')">
@@ -149,37 +145,25 @@ Reject
 
 </button>
 
-
 `;
 
-
-
 }else if(payment.payment_status === "Approved"){
-
 
 buttons =
 "<h3 style='color:green;'>✅ Approved</h3>";
 
-
-
-}else if(payment.payment_status === "Rejected"){
-
+}else{
 
 buttons =
 "<h3 style='color:red;'>❌ Rejected</h3>";
 
-
-
 }
-
 
 
 html += `
 
-
 <div class="payment-card">
 
-
 <p><strong>User ID:</strong>
 
 ${payment.user_id}
@@ -187,14 +171,9 @@ ${payment.user_id}
 </p>
 
 
-<p><strong>User ID:</strong>
+<p><strong>Package ID:</strong>
 
-${payment.user_id}
-
-</p>
-
-<p id="customer-${payment.id}">
-Loading customer...
+${payment.package_id}
 
 </p>
 
@@ -215,41 +194,16 @@ ${payment.payment_status}
 
 ${buttons}
 
-
 </div>
-
 
 `;
 
-
-
 });
 
 
+document.getElementById("paymentsList").innerHTML =
+html;
 
-data.forEach(async(payment)=>{
-
-const { data: profile } =
-await supabaseClient
-.from("profiles")
-.select("full_name,email")
-.eq("id",payment.user_id)
-.single();
-
-
-const customerBox =
-document.getElementById("customer-" + payment.id);
-
-
-if(profile && customerBox){
-
-customerBox.innerHTML =
-"👤 " + profile.full_name +
-"<br>📧 " + profile.email;
-
-}
-
-});
 
 }
   async function approvePayment(id){
@@ -404,7 +358,6 @@ loadPayments();
 
 
 }
-
 
 
 
