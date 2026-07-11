@@ -269,6 +269,28 @@ alert(packageError.message);
 return;
 
 }
+    const { data: existingPurchase, error: existingPurchaseError } =
+await supabaseClient
+.from("purchases")
+.select("id")
+.eq("payment_id", payment.id)
+.maybeSingle();
+
+if(existingPurchaseError){
+
+alert(existingPurchaseError.message);
+
+return;
+
+}
+
+if(existingPurchase){
+
+alert("This payment has already been approved.");
+
+return;
+
+}
 
 
 
