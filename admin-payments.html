@@ -267,7 +267,7 @@ await supabaseClient
 
 if(purchaseError){
 
-alert("Purchase Error: " + purchaseError.message);
+alert(JSON.stringify(purchaseError));
 
 return;
 
