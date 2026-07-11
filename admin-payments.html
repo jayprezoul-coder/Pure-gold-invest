@@ -229,18 +229,13 @@ html;
 
 }
   async function approvePayment(id){
-    alert("Step 1: Approve started");
-
-
 
 const { data: payment, error: paymentError } =
 await supabaseClient
 .from("payments")
 .select("*")
-.eq("id",id)
+.eq("id", id)
 .single();
-    alert("Step 2: Payment loaded");
-
 
 
 if(paymentError){
@@ -248,6 +243,80 @@ if(paymentError){
 alert(paymentError.message);
 
 return;
+
+}
+
+
+const { data: goldPackage, error: packageError } =
+await supabaseClient
+.from("gold_packages")
+.select("*")
+.eq("id", payment.package_id)
+.single();
+
+
+if(packageError){
+
+alert(packageError.message);
+
+return;
+
+}
+
+
+const { error: purchaseError } =
+await supabaseClient
+.from("purchases")
+.insert([{
+
+user_id: payment.user_id,
+
+amount: payment.amount,
+
+payment_status: "Approved",
+
+profit: goldPackage.profit,
+
+package_id: payment.package_id,
+
+payment_id: payment.id
+
+}]);
+
+
+if(purchaseError){
+
+alert(purchaseError.message);
+
+return;
+
+}
+
+
+const { error:updateError } =
+await supabaseClient
+.from("payments")
+.update({
+
+payment_status:"Approved"
+
+})
+.eq("id", id);
+
+
+if(updateError){
+
+alert(updateError.message);
+
+return;
+
+}
+
+
+alert("Payment approved successfully");
+
+
+loadPayments();
 
 }
 
