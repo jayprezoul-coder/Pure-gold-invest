@@ -205,16 +205,35 @@ profit ? "$" + Number(profit).toLocaleString() : "$0";
 
 
 
+async function loadBitcoinSettings(){
+
+const { data, error } = await supabaseClient
+.from("bitcoin_settings")
+.select("*")
+.single();
+
+
+if(error){
+
+console.log(error.message);
+
+return;
+
+}
+
+
 document.getElementById("btcAddress").innerText =
-
-"YOUR BITCOIN WALLET ADDRESS";
-
+data.wallet_address;
 
 
 document.getElementById("btcQR").src =
+data.qr_code_url;
 
-"YOUR BITCOIN QR CODE IMAGE";
 
+}
+
+
+loadBitcoinSettings();
 
 
 
