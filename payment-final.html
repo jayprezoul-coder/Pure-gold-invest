@@ -207,7 +207,7 @@ profit ? "$" + Number(profit).toLocaleString() : "$0";
 
 async function loadBitcoinSettings(){
 
-alert("loadBitcoinSettings is running");
+
 
 const { data, error } = await supabaseClient
 .from("bitcoin_settings")
