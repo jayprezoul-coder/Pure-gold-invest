@@ -210,7 +210,8 @@ async function loadBitcoinSettings(){
 const { data, error } = await supabaseClient
 .from("bitcoin_settings")
 .select("*")
-.single();
+.limit(1)
+.maybeSingle();
 
 
 if(error){
