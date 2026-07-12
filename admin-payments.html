@@ -475,13 +475,13 @@ payment_status:"Rejected"
 })
 .eq("id",id);
 
-if(updateError){
-
-alert(updateError.message);
-
-return;
-
+if (updateError) {
+    console.log(updateError);
+    alert(JSON.stringify(updateError));
+    return;
 }
+
+alert("Payment table updated successfully");
     const { error:notificationError } =
 await supabaseClient
 .from("notifications")
