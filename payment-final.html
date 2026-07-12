@@ -214,12 +214,10 @@ const { data, error } = await supabaseClient
 .maybeSingle();
 
 
-if(error){
+alert(JSON.stringify({ data, error }));
 
-alert(error.message);
-
-return;
-
+if(error || !data){
+    return;
 }
 
 
