@@ -290,20 +290,20 @@ document.getElementById(
 ).innerHTML=html;
 
 }
-  async function approvePayment(id){
+  async function approvePayment(id) {
 
-const { data:payment,error:paymentError } =
-await supabaseClient
-.from("payments")
-.select("*")
-.eq("id",id)
-.single();
+const { error } = await supabaseClient.rpc("approve_payment", {
+    payment_id: Number(id)
+});
 
-if(paymentError){
+if (error) {
+    alert(error.message);
+    return;
+}
 
-alert(paymentError.message);
+alert("✅ Payment approved successfully");
 
-return;
+loadPayments();
 
 }
 
