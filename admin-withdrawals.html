@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Withdrawal Requests</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🏦 Withdrawal Requests</h1>
+
+</header>
+
+<section>
+
+<div id="withdrawalList">
+
+<p>Loading withdrawal requests...</p>
+
+</div>
+
+</section>
+
+<script>
+
+const SUPABASE_URL =
+"https://jjydxddxxcqxgegkfgnh.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
+
+const supabaseClient =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+  async function loadWithdrawals(){
+
+const { data, error } =
+
+await supabaseClient
+
+.from("withdrawals")
+
+.select("*")
+
+.order("created_at",{ascending:false});
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+const list =
+document.getElementById("withdrawalList");
+
+
+list.innerHTML = "";
+
+
+if(!data || data.length===0){
+
+list.innerHTML =
+
+"<p>No withdrawal requests.</p>";
+
+return;
+
+}
+
+
+data.forEach(item=>{
+
+
+list.innerHTML += `
+
+<div class="card">
+
+<h3>💵 $${Number(item.amount).toLocaleString()}</h3>
+
+<p><strong>Bank:</strong> ${item.bank_name}</p>
+
+<p><strong>Account Name:</strong> ${item.account_name}</p>
+
+<p><strong>Account Number:</strong> ${item.account_number}</p>
+
+<p><strong>Status:</strong> ${item.status}</p>
+
+<p>${new Date(item.created_at).toLocaleString()}</p>
+
+<button
+onclick="approveWithdrawal('${item.id}')">
+
+✅ Approve
+
+</button>
+
+<button
+onclick="rejectWithdrawal('${item.id}')">
+
+❌ Reject
+
+</button>
+
+</div>
+
+<br>
+
+`;
+
+});
+
+
+}
+
+
+loadWithdrawals();
+  async function approveWithdrawal(id){
+
+const { error } =
+
+await supabaseClient
+
+.from("withdrawals")
+
+.update({
+
+status:"Approved"
+
+})
+
+.eq("id", id);
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+alert("Withdrawal approved successfully.");
+
+loadWithdrawals();
+
+}
+
+
+
+async function rejectWithdrawal(id){
+
+const { error } =
+
+await supabaseClient
+
+.from("withdrawals")
+
+.update({
+
+status:"Rejected"
+
+})
+
+.eq("id", id);
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+alert("Withdrawal rejected.");
+
+loadWithdrawals();
+
+}
+  setInterval(()=>{
+
+loadWithdrawals();
+
+},3000);
+
+</script>
+
+</body>
+
+</html>
