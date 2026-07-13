@@ -24,8 +24,8 @@ height:100vh;
 #users{
 width:30%;
 background:white;
-overflow-y:auto;
 border-right:1px solid #ddd;
+overflow-y:auto;
 }
 
 .user{
@@ -54,33 +54,8 @@ font-weight:bold;
 
 #chatBox{
 flex:1;
-overflow-y:auto;
 padding:15px;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.userMessage{
-align-self:flex-start;
-background:white;
-padding:10px;
-border-radius:10px;
-max-width:80%;
-}
-
-.adminMessage{
-align-self:flex-end;
-background:#dcf8c6;
-padding:10px;
-border-radius:10px;
-max-width:80%;
-}
-
-.time{
-font-size:11px;
-color:gray;
-margin-top:5px;
+overflow-y:auto;
 }
 
 #bottom{
@@ -93,17 +68,10 @@ background:white;
 #replyInput{
 flex:1;
 padding:12px;
-border:1px solid #ccc;
-border-radius:20px;
 }
 
 #sendButton{
-background:#075e54;
-color:white;
-border:none;
 padding:12px 20px;
-border-radius:20px;
-cursor:pointer;
 }
 
 </style>
@@ -112,9 +80,7 @@ cursor:pointer;
 
 <body>
 
-<div id="users">
-
-</div>
+<div id="users"></div>
 
 <div id="chatArea">
 
@@ -126,7 +92,7 @@ cursor:pointer;
 
 <div id="chatBox">
 
-<p>Select a user to view messages.</p>
+Select a user to view messages.
 
 </div>
 
@@ -136,7 +102,8 @@ cursor:pointer;
 id="replyInput"
 placeholder="Type your reply...">
 
-<button id="sendButton">
+<button
+id="sendButton">
 
 Send
 
@@ -145,37 +112,29 @@ Send
 </div>
 
 </div>
+
 <script>
 
 const SUPABASE_URL =
 "https://jjydxddxxcqxgegkfgnh.supabase.co";
 
-
 const SUPABASE_KEY =
 "sb_publishable_p8xWtXedN8AjaVKhdPhOgQ_Qwk2rAaH";
-
-
 const supabaseClient =
 supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
-
-
-let selectedUser = null;
-
+  let selectedUser = null;
 
 
 async function loadUsers(){
 
-
 const { data, error } =
 
 await supabaseClient
-
 .from("messages")
-
-.select("user_id")
+.select("user_id");
 
 
 if(error){
@@ -188,23 +147,22 @@ return;
 
 
 const uniqueUsers =
-[...new Set(data.map(item=>item.user_id))];
+[...new Set(data.map(item => item.user_id))];
 
 
 const usersDiv =
 document.getElementById("users");
 
 
-usersDiv.innerHTML="";
+usersDiv.innerHTML = "";
 
 
 uniqueUsers.forEach(id=>{
 
+
 usersDiv.innerHTML += `
 
-<div
-class="user"
-onclick="openChat('${id}')">
+<div class="user" onclick="openChat('${id}')">
 
 ${id}
 
@@ -217,10 +175,9 @@ ${id}
 
 }
 
+
 loadUsers();
-
-
-async function openChat(userId){
+  async function openChat(userId){
 
 selectedUser = userId;
 
@@ -257,36 +214,31 @@ chatBox.innerHTML = "";
 data.forEach(msg=>{
 
 
-const bubble =
-
+const senderClass =
 msg.sender === "Admin"
-
 ?
-
 "adminMessage"
-
 :
-
 "userMessage";
-
 
 
 chatBox.innerHTML += `
 
-<div class="${bubble}">
+<div class="${senderClass}">
 
 ${msg.message}
 
-<div class="time">
+<br>
+
+<small>
 
 ${new Date(msg.created_at).toLocaleString()}
 
-</div>
+</small>
 
 </div>
 
 `;
-
 
 });
 
@@ -294,10 +246,12 @@ ${new Date(msg.created_at).toLocaleString()}
 chatBox.scrollTop =
 chatBox.scrollHeight;
 
+
 }
   document
 .getElementById("sendButton")
 .addEventListener("click", async ()=>{
+
 
 if(!selectedUser){
 
@@ -307,17 +261,21 @@ return;
 
 }
 
+
 const input =
 document.getElementById("replyInput");
+
 
 const text =
 input.value.trim();
 
-if(text===""){
+
+if(text === ""){
 
 return;
 
 }
+
 
 const { error } =
 
@@ -350,9 +308,12 @@ return;
 
 }
 
-input.value="";
+
+input.value = "";
+
 
 openChat(selectedUser);
+
 
 });
   setInterval(()=>{
@@ -366,8 +327,10 @@ openChat(selectedUser);
 loadUsers();
 
 },3000);
-  </script>
+
+</script>
 
 </body>
 
 </html>
+  
