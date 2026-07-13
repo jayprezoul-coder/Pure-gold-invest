@@ -156,10 +156,31 @@ return;
 }
 
 
+await supabaseClient
+.from("notifications")
+.insert([{
+
+user_id: (
+await supabaseClient
+.from("withdrawals")
+.select("user_id")
+.eq("id", id)
+.single()
+).data.user_id,
+
+title: "Withdrawal Approved",
+
+message: "Your withdrawal request has been approved successfully.",
+
+status: "Unread",
+
+is_read: false
+
+}]);
+
 alert("Withdrawal approved successfully.");
 
 loadWithdrawals();
-
 }
 
 
@@ -189,6 +210,28 @@ return;
 
 }
 
+
+await supabaseClient
+.from("notifications")
+.insert([{
+
+user_id: (
+await supabaseClient
+.from("withdrawals")
+.select("user_id")
+.eq("id", id)
+.single()
+).data.user_id,
+
+title: "Withdrawal Rejected",
+
+message: "Your withdrawal request has been rejected.",
+
+status: "Unread",
+
+is_read: false
+
+}]);
 
 alert("Withdrawal rejected.");
 
