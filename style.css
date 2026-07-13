@@ -110,3 +110,13 @@ h1 {
 h2 {
   font-size: 26px;
 }
+.logo{
+display:block;
+width:140px;
+height:140px;
+margin:0 auto 15px;
+border-radius:50%;
+object-fit:cover;
+box-shadow:0 0 25px rgba(212,175,55,0.5);
+border:3px solid #d4af37;
+}
