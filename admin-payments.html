@@ -300,12 +300,23 @@ if (error) {
     alert(error.message);
     return;
 }
+    await fetch("https://hook.eu1.make.com/g79cjr3vuagc9ufyrn8ae5p5jultgqau", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    payment_id: id,
+    status: "Approved"
+  })
+});
 
 alert("✅ Payment approved successfully");
 
 loadPayments();
 
 }
+  
 
 
 
